@@ -93,7 +93,8 @@ const Footer = () => {
               <div className="flex items-start space-x-3">
                 <MapPin className="h-5 w-5 text-red-500 flex-shrink-0 mt-0.5" />
                 <span className="text-sm text-gray-400">
-                  123 Motor Ave, Detroit, MI 48201
+                  Corner R25 and Philadelphia Hospital Road. Bushveld Complex.
+                  Elandsdoorn. Dennilton. Limpopo.1030
                 </span>
               </div>
               <div className="flex items-center space-x-3">

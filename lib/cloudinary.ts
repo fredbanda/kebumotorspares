@@ -13,5 +13,9 @@ if (configured) {
 
 export async function uploadProductImage(file: string) {
   if (!configured) throw new Error('Cloudinary is not configured. Add the Cloudinary environment variables to enable uploads.')
-  return cloudinary.uploader.upload(file, { folder: 'redline-parts/products', resource_type: 'image' })
+  return cloudinary.uploader.upload(file, {
+    upload_preset: 'kebumotorspares',
+    folder: 'kebumotorspares/products',
+    resource_type: 'image',
+  })
 }

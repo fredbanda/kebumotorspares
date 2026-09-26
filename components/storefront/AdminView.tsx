@@ -49,6 +49,26 @@ export function AdminView({ initialProducts, initialOrders, initialReturns, init
   const [discountForm, setDiscountForm] = useState(emptyDiscount)
   const [promoForm, setPromoForm] = useState(emptyPromotion)
   const [saving, setSaving] = useState(false)
+  const [uploading, setUploading] = useState(false)
+
+  async function handleImageUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    if (!file) return
+    setUploading(true)
+    const reader = new FileReader()
+    reader.onload = async () => {
+      const res = await fetch('/api/admin/upload', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ data: reader.result }),
+      })
+      const json = await res.json()
+      if (json.url) setProductForm((f) => ({ ...f, image: json.url }))
+      else alert(json.error ?? 'Upload failed')
+      setUploading(false)
+    }
+    reader.readAsDataURL(file)
+  }
 
   const totalRevenue = sales.reduce((s, x) => s + x.revenue, 0)
   const totalProfit = sales.reduce((s, x) => s + (x.profit ?? 0), 0)
@@ -168,7 +188,15 @@ export function AdminView({ initialProducts, initialOrders, initialReturns, init
               <label>Cost price<input type="number" min="0" step="0.01" value={productForm.costPrice} onChange={(e) => setProductForm({ ...productForm, costPrice: e.target.value })} placeholder="0.00" /></label>
               <label>Stock *<input type="number" min="0" value={productForm.stock} onChange={(e) => setProductForm({ ...productForm, stock: e.target.value })} placeholder="0" required /></label>
             </div>
-            <label>Image URL<input value={productForm.image} onChange={(e) => setProductForm({ ...productForm, image: e.target.value })} placeholder="Cloudinary URL (optional)" /></label>
+            <label>
+              Product image
+              <input type="file" accept="image/*" onChange={handleImageUpload} disabled={uploading} />
+              {uploading && <span style={{ fontSize: 11, color: 'var(--muted-foreground)' }}>Uploading…</span>}
+              {productForm.image && (
+                <img src={productForm.image} alt="preview" style={{ width: '100%', height: 120, objectFit: 'cover', marginTop: 6 }} />
+              )}
+              <input value={productForm.image} onChange={(e) => setProductForm({ ...productForm, image: e.target.value })} placeholder="Or paste a URL" style={{ marginTop: 4 }} />
+            </label>
             <label>Description<textarea value={productForm.description} onChange={(e) => setProductForm({ ...productForm, description: e.target.value })} rows={3} /></label>
             <button className="red-button" type="submit" disabled={saving}>Add product <Plus size={16} /></button>
           </form>
@@ -177,7 +205,7 @@ export function AdminView({ initialProducts, initialOrders, initialReturns, init
             <div className="form-head"><h2>All products ({products.length})</h2><button className="text-button">Export <ArrowRight size={14} /></button></div>
             {products.map((p) => (
               <div className="inventory-item" key={p.id}>
-                <img src={p.image} alt="" />
+                {p.image ? <img src={p.image} alt="" /> : <div style={{ width: 50, height: 50, background: 'var(--muted)' }} />}
                 <div>
                   <strong>{p.name}</strong>
                   <span>{p.category} · {p.sku}</span>

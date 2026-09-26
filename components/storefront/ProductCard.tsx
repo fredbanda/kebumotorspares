@@ -13,7 +13,9 @@ export function ProductCard({ product, wished, onWish, onView, onAdd }: ProductC
   return (
     <article className="product-card">
       <div className="product-image" onClick={onView}>
-        <img src={product.image} alt={product.name} />
+        {product.image
+          ? <img src={product.image} alt={product.name} />
+          : <div style={{ width: '100%', height: '100%', background: 'var(--muted)' }} />}
         {product.badge && <span className="badge">{product.badge}</span>}
         <button
           className={wished ? 'wish active' : 'wish'}

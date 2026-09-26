@@ -1,0 +1,258 @@
+enum DeliveryStatus {
+  pending
+  delivered
+  failed
+}
+
+enum PaymentStatus {
+  pending
+  paid
+  failed
+  refunded
+}
+
+enum OrderStatus {
+  pending
+  processing
+  shipped
+  delivered
+  canceled
+}
+
+enum ReturnStatus {
+  requested
+  approved
+  rejected
+  refunded
+}
+
+enum DiscountType {
+  percentage
+  fixed
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  username  String?
+  name      String?
+  address   String?
+  tel       String?
+  whatsapp  String?
+  createdAt TimestamptzString        @default(now())
+  updatedAt temporal.updatedAtString()
+
+  orders            Order[]
+  deliveryAddresses DeliveryAddress[]
+  payments          Payment[]
+  returns           Returns[]
+  reviews           Review[]
+  wishlists         Wishlist[]
+
+  @@map("users")
+}
+
+model Product {
+  id          String  @id @default(uuid())
+  name        String
+  slug        String  @unique
+  category    String
+  sku         String  @unique
+  description String?
+  imageUrl    String?
+  price       Float
+  costPrice   Float?
+  active      Boolean @default(true)
+  createdAt   TimestamptzString        @default(now())
+  updatedAt   temporal.updatedAtString()
+
+  orderItems      OrderItem[]
+  reviews         Review[]
+  wishlists       Wishlist[]
+  inventory       Inventory?
+  promotionItems  PromotionItem[]
+
+  @@map("products")
+}
+
+model Inventory {
+  id        String @id @default(uuid())
+  productId String @unique
+  quantity  Int    @default(0)
+  lowStock  Int    @default(5)
+  updatedAt temporal.updatedAtString()
+
+  product Product @relation(fields: [productId], references: [id])
+
+  @@map("inventory")
+}
+
+model Order {
+  id        String @id @default(uuid())
+  userId    String
+  productId String
+  quantity  Int
+  total     Float
+  status    String
+  createdAt TimestamptzString        @default(now())
+  updatedAt temporal.updatedAtString()
+
+  user       User        @relation(fields: [userId], references: [id])
+  orderItems OrderItem[]
+  payments   Payment[]
+  returns    Returns[]
+
+  @@map("orders")
+}
+
+model OrderItem {
+  id                String @id @default(uuid())
+  orderId           String
+  productId         String
+  quantity          Int
+  total             Float
+  fulfillmentStatus String
+  paymentStatus     String
+  deliveryStatus    String @default("pending")
+  createdAt         TimestamptzString        @default(now())
+  updatedAt         temporal.updatedAtString()
+
+  order   Order   @relation(fields: [orderId], references: [id])
+  product Product @relation(fields: [productId], references: [id])
+
+  @@map("order_items")
+}
+
+model DeliveryAddress {
+  id        String @id @default(uuid())
+  userId    String
+  address   String
+  city      String
+  state     String
+  zip       String
+  country   String
+  createdAt TimestamptzString        @default(now())
+  updatedAt temporal.updatedAtString()
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@map("delivery_addresses")
+}
+
+model Payment {
+  id            String @id @default(uuid())
+  userId        String
+  orderId       String
+  amount        Float
+  status        String
+  paymentId     String
+  paymentMethod String
+  createdAt     TimestamptzString        @default(now())
+  updatedAt     temporal.updatedAtString()
+
+  user  User  @relation(fields: [userId], references: [id])
+  order Order @relation(fields: [orderId], references: [id])
+
+  @@map("payments")
+}
+
+model Returns {
+  id          String @id @default(uuid())
+  orderId     String
+  userId      String
+  reason      String
+  status      String @default("requested")
+  refundAmount Float?
+  notes       String?
+  createdAt   TimestamptzString        @default(now())
+  updatedAt   temporal.updatedAtString()
+
+  order Order @relation(fields: [orderId], references: [id])
+  user  User  @relation(fields: [userId], references: [id])
+
+  @@map("returns")
+}
+
+model Sale {
+  id          String @id @default(uuid())
+  orderId     String @unique
+  revenue     Float
+  cost        Float?
+  profit      Float?
+  channel     String @default("online")
+  createdAt   TimestamptzString        @default(now())
+
+  @@map("sales")
+}
+
+model Discount {
+  id          String   @id @default(uuid())
+  code        String   @unique
+  type        String
+  value       Float
+  minOrder    Float?
+  maxUses     Int?
+  usedCount   Int      @default(0)
+  active      Boolean  @default(true)
+  expiresAt   TimestamptzString?
+  createdAt   TimestamptzString        @default(now())
+  updatedAt   temporal.updatedAtString()
+
+  @@map("discounts")
+}
+
+model Promotion {
+  id          String   @id @default(uuid())
+  title       String
+  description String?
+  bannerUrl   String?
+  active      Boolean  @default(true)
+  startsAt    TimestamptzString?
+  endsAt      TimestamptzString?
+  createdAt   TimestamptzString        @default(now())
+  updatedAt   temporal.updatedAtString()
+
+  items PromotionItem[]
+
+  @@map("promotions")
+}
+
+model PromotionItem {
+  id          String @id @default(uuid())
+  promotionId String
+  productId   String
+  salePrice   Float?
+
+  promotion Promotion @relation(fields: [promotionId], references: [id])
+  product   Product   @relation(fields: [productId], references: [id])
+
+  @@map("promotion_items")
+}
+
+model Review {
+  id        String @id @default(uuid())
+  userId    String
+  productId String
+  rating    Int
+  comment   String
+  createdAt TimestamptzString        @default(now())
+  updatedAt temporal.updatedAtString()
+
+  user    User    @relation(fields: [userId], references: [id])
+  product Product @relation(fields: [productId], references: [id])
+
+  @@map("reviews")
+}
+
+model Wishlist {
+  id        String @id @default(uuid())
+  userId    String
+  productId String
+  createdAt TimestamptzString        @default(now())
+  updatedAt temporal.updatedAtString()
+
+  user    User    @relation(fields: [userId], references: [id])
+  product Product @relation(fields: [productId], references: [id])
+
+  @@map("wishlists")
+}

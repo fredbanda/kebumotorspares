@@ -93,8 +93,10 @@ const Footer = () => {
               <div className="flex items-start space-x-3">
                 <MapPin className="h-5 w-5 text-red-500 flex-shrink-0 mt-0.5" />
                 <span className="text-sm text-gray-400">
-                  Corner R25 and Philadelphia Hospital Road. Bushveld Complex.
-                  Elandsdoorn. Dennilton. Limpopo.1030
+                  <p>Corner R25 and Philadelphia Hospital Road.</p>
+                  <p>Elandsdoorn, Limpopo, 1030</p>
+                  <p>Elandsdoorn,</p>
+                  <p>Dennilton, Limpopo, 1030</p>
                 </span>
               </div>
               <div className="flex items-center space-x-3">

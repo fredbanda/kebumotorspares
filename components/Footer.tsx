@@ -82,7 +82,7 @@ const Footer = () => {
           <div className="space-y-4">
             <div className="flex items-center">
               <span className="text-2xl font-bold text-white">
-                Moto<span className="text-red-600">Parts</span>
+                Kebu Motor<span className="text-red-600">Parts</span>
               </span>
             </div>
             <p className="text-sm text-gray-400 leading-relaxed">
@@ -106,7 +106,7 @@ const Footer = () => {
               <div className="flex items-center space-x-3">
                 <Mail className="h-5 w-5 text-red-500 flex-shrink-0" />
                 <span className="text-sm text-gray-400">
-                  support@motoparts.com
+                  support@kebumotorparts.co.za
                 </span>
               </div>
             </div>
@@ -244,7 +244,7 @@ const Footer = () => {
         <div className="max-w-7xl mx-auto px-4 py-6 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
             <p className="text-sm text-gray-500 text-center md:text-left">
-              &copy; {currentYear} MotoParts. All rights reserved.
+              &copy; {currentYear} Kebu Motor Parts. All rights reserved.
             </p>
             <div className="flex flex-wrap justify-center gap-x-6 gap-y-2">
               <Link

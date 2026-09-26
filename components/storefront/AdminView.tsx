@@ -1,7 +1,6 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
 import {
   ArrowRight, Plus, Package, ShoppingCart, RotateCcw,
   TrendingUp, Layers, Tag, Megaphone, Users, X, Check
@@ -36,7 +35,6 @@ interface AdminViewProps {
 }
 
 export function AdminView({ initialProducts, initialOrders, initialReturns, initialSales, initialDiscounts, initialPromotions, initialCustomers }: AdminViewProps) {
-  const router = useRouter()
   const [tab, setTab] = useState<Tab>('products')
   const [products, setProducts] = useState<Product[]>(initialProducts)
   const [orders, setOrders] = useState<Order[]>(initialOrders)
@@ -98,13 +96,11 @@ export function AdminView({ initialProducts, initialOrders, initialReturns, init
   async function updateOrderStatus(id: string, status: Order['status']) {
     setOrders((o) => o.map((x) => x.id === id ? { ...x, status } : x))
     await fetch('/api/admin/orders', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id, status }) })
-    router.refresh()
   }
 
   async function updateReturnStatus(id: string, status: Return['status']) {
     setReturns((r) => r.map((x) => x.id === id ? { ...x, status } : x))
     await fetch('/api/admin/returns', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id, status }) })
-    router.refresh()
   }
 
   async function submitDiscount(e: React.FormEvent) {
@@ -153,14 +149,12 @@ export function AdminView({ initialProducts, initialOrders, initialReturns, init
 
   return (
     <main className="admin-page">
-      <button className="back-button" onClick={() => router.push('/')}>← Back to store</button>
-
       <div className="admin-heading">
         <div>
           <p className="eyebrow">INTERNAL GARAGE</p>
           <h1>Admin Dashboard</h1>
         </div>
-        <div style={{ display: 'flex', gap: 24 }}>
+        <div style={{ display: 'flex', gap: 24, flexWrap: 'wrap' }}>
           <span className="admin-stat"><b>{products.length}</b> products</span>
           <span className="admin-stat"><b>{orders.length}</b> orders</span>
           <span className="admin-stat"><b>{money(totalRevenue)}</b> revenue</span>

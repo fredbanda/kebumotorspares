@@ -51,7 +51,7 @@ export function CheckoutView({ cart, total, userId, onBack, onSuccess }: Checkou
     yoco.showPopup({
       amountInCents: Math.round(total * 100),
       currency: 'ZAR',
-      name: 'Kebu Motor Parts',
+      name: 'Kebu Motor Spares',
       description: `${cart.length} item(s)`,
       callback: async (result) => {
         if (result.error) {

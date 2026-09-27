@@ -244,7 +244,7 @@ const Footer = () => {
         <div className="max-w-7xl mx-auto px-4 py-6 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
             <p className="text-sm text-gray-500 text-center md:text-left">
-              &copy; {currentYear} Kebu Motor Parts. All rights reserved.
+              &copy; {currentYear} Kebu Motor Spares. All rights reserved.
             </p>
             <div className="flex flex-wrap justify-center gap-x-6 gap-y-2">
               <Link

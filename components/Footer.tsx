@@ -66,7 +66,7 @@ const Footer = () => {
                 className="flex items-center justify-center space-x-2 text-gray-300"
               >
                 <badge.icon className="h-5 w-5 text-red-500 flex-shrink-0" />
-                <span className="text-xs sm:text-sm font-medium">
+                <span className="text-xs sm:text-sm font-medium text-center">
                   {badge.text}
                 </span>
               </div>
@@ -78,46 +78,64 @@ const Footer = () => {
       {/* Main Footer Content */}
       <div className="max-w-7xl mx-auto px-4 py-12 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
-          {/* Brand & Contact */}
-          <div className="space-y-4">
+          {/* 1. Brand & Contact Column */}
+          <div className="space-y-6">
             <div className="flex items-center">
               <span className="text-2xl font-bold text-white">
                 Kebu Motor<span className="text-red-600"> Spares</span>
               </span>
             </div>
+
             <p className="text-sm text-gray-400 leading-relaxed">
               Your trusted source for high-quality motor parts and accessories.
               Performance, reliability, and style for every ride.
             </p>
-            <div className="space-y-3 pt-2">
+
+            <div className="space-y-4 pt-2">
+              {/* Address */}
               <div className="flex items-start space-x-3">
                 <MapPin className="h-5 w-5 text-red-500 flex-shrink-0 mt-0.5" />
-                <span className="text-sm text-gray-400">
+                <div className="text-sm text-gray-400 leading-relaxed">
                   <p>Corner R25 and Philadelphia Hospital Road.</p>
-                  <p>Elandsdoorn,</p>
-                  <p>Dennilton,</p>
+                  <p>Elandsdoorn, Dennilton,</p>
                   <p>Limpopo, 1030</p>
-                </span>
+                </div>
               </div>
-              <div className="flex items-center space-x-3">
-                <Link href="tel:+27733747856">
-                  <Phone className="h-5 w-5 text-red-500 flex-shrink-0" />
-                  <span className="text-sm text-gray-400">073 374 7856</span>
+
+              {/* Phone & WhatsApp Combined */}
+              <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+                <Link
+                  href="tel:+27733747856"
+                  className="flex items-center space-x-3 text-gray-400 hover:text-white transition-colors duration-200 group"
+                >
+                  <Phone className="h-5 w-5 text-red-500 flex-shrink-0 group-hover:text-red-400" />
+                  <span className="text-sm">073 374 7856</span>
                 </Link>
-                <Link href="https://wa.me/27733747856">WhatsApp Us</Link>
+                <span className="text-gray-700 hidden sm:block">|</span>
+                <Link
+                  href="https://wa.me/27733747856"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm font-medium text-green-500 hover:text-green-400 transition-colors duration-200"
+                >
+                  WhatsApp Us
+                </Link>
               </div>
+
+              {/* Email */}
               <div className="flex items-center space-x-3">
-              <Link href="mailto:support@kebumotorspares.co.za">
                 <Mail className="h-5 w-5 text-red-500 flex-shrink-0" />
-                <span className="text-sm text-gray-400">
+                <Link
+                  href="mailto:support@kebumotorspares.co.za"
+                  className="text-sm text-gray-400 hover:text-white transition-colors duration-200 break-all"
+                >
                   support@kebumotorspares.co.za
-                </span>
-              </Link>
+                </Link>
               </div>
             </div>
           </div>
 
-          {/* Categories */}
+          {/* 2. Categories Column */}
           <div>
             <h3 className="text-sm font-semibold text-white uppercase tracking-wider mb-4">
               Shop Categories
@@ -136,7 +154,7 @@ const Footer = () => {
             </ul>
           </div>
 
-          {/* Customer Service & Newsletter */}
+          {/* 3. Customer Service & Newsletter Column */}
           <div className="space-y-8">
             {/* Customer Service Links */}
             <div>
@@ -188,7 +206,7 @@ const Footer = () => {
             </div>
           </div>
 
-          {/* Social & Payment */}
+          {/* 4. Social & Payment Column */}
           <div className="space-y-8">
             {/* Social Media */}
             <div>
@@ -223,7 +241,7 @@ const Footer = () => {
                     className="bg-gray-900 border border-gray-800 rounded-md p-2 flex flex-col items-center justify-center hover:border-red-600 transition-colors duration-200"
                   >
                     <span className="text-lg">{method.icon}</span>
-                    <span className="text-[10px] text-gray-400 mt-1">
+                    <span className="text-[10px] text-gray-400 mt-1 text-center">
                       {method.name}
                     </span>
                   </div>

@@ -82,7 +82,7 @@ const Footer = () => {
           <div className="space-y-4">
             <div className="flex items-center">
               <span className="text-2xl font-bold text-white">
-                Kebu Motor<span className="text-red-600"> Parts</span>
+                Kebu Motor<span className="text-red-600"> Spares</span>
               </span>
             </div>
             <p className="text-sm text-gray-400 leading-relaxed">
@@ -94,9 +94,9 @@ const Footer = () => {
                 <MapPin className="h-5 w-5 text-red-500 flex-shrink-0 mt-0.5" />
                 <span className="text-sm text-gray-400">
                   <p>Corner R25 and Philadelphia Hospital Road.</p>
-                  <p>Elandsdoorn, Limpopo, 1030</p>
                   <p>Elandsdoorn,</p>
-                  <p>Dennilton, Limpopo, 1030</p>
+                  <p>Dennilton,</p> 
+                  <p>Limpopo, 1030</p>
                 </span>
               </div>
               <div className="flex items-center space-x-3">
@@ -106,7 +106,7 @@ const Footer = () => {
               <div className="flex items-center space-x-3">
                 <Mail className="h-5 w-5 text-red-500 flex-shrink-0" />
                 <span className="text-sm text-gray-400">
-                  support@kebumotorparts.co.za
+                  support@kebumotorspares.co.za
                 </span>
               </div>
             </div>

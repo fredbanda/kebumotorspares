@@ -21,7 +21,7 @@ export function Header({ cartCount, mobileOpen, onToggleMobile, onLogoClick, onC
         </button>
 
         <button className="wordmark" onClick={onLogoClick}>
-          KEBU MOTOR PARTS
+          KEBU MOTOR SPARES
         </button>
 
         <nav className={mobileOpen ? 'main-nav mobile-visible' : 'main-nav'}>

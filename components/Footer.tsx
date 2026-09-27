@@ -95,19 +95,24 @@ const Footer = () => {
                 <span className="text-sm text-gray-400">
                   <p>Corner R25 and Philadelphia Hospital Road.</p>
                   <p>Elandsdoorn,</p>
-                  <p>Dennilton,</p> 
+                  <p>Dennilton,</p>
                   <p>Limpopo, 1030</p>
                 </span>
               </div>
               <div className="flex items-center space-x-3">
-                <Phone className="h-5 w-5 text-red-500 flex-shrink-0" />
-                <span className="text-sm text-gray-400">+1 (555) 123-4567</span>
+                <Link href="tel:+27733747856">
+                  <Phone className="h-5 w-5 text-red-500 flex-shrink-0" />
+                  <span className="text-sm text-gray-400">073 374 7856</span>
+                </Link>
+                <Link href="https://wa.me/27733747856">WhatsApp Us</Link>
               </div>
               <div className="flex items-center space-x-3">
+              <Link href="mailto:support@kebumotorspares.co.za">
                 <Mail className="h-5 w-5 text-red-500 flex-shrink-0" />
                 <span className="text-sm text-gray-400">
                   support@kebumotorspares.co.za
                 </span>
+              </Link>
               </div>
             </div>
           </div>

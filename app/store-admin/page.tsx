@@ -1,10 +1,13 @@
 import { db } from '@/prisma/db'
 import { AdminView } from '@/components/storefront/AdminView'
-import type { Order, Return, Sale, Discount, Promotion, Customer } from '@/lib/catalog'
+import type { Order, Return, Sale, Discount, Promotion, Customer, Product } from '@/lib/catalog'
+import { Pool } from 'pg'
+
+const pool = new Pool({ connectionString: process.env.DATABASE_URL })
 
 export default async function StoreAdmin() {
-  const [products, orders, returns, users] = await Promise.all([
-    db.orm.public.Product.select('id', 'name', 'category', 'slug', 'description', 'imageUrl', 'price', 'active', 'createdAt').orderBy((p) => p.createdAt.desc()).all(),
+  const [products, orders, returns, users, authUsers] = await Promise.all([
+    db.orm.public.Product.select('id', 'name', 'category', 'slug', 'description', 'imageUrl', 'price', 'costPrice', 'active', 'createdAt').orderBy((p) => p.createdAt.desc()).all(),
     db.orm.public.Order
       .orderBy((o) => o.createdAt.desc())
       .include('user', (u) => u.select('name', 'email'))
@@ -19,6 +22,7 @@ export default async function StoreAdmin() {
       .orderBy((u) => u.createdAt.desc())
       .include('orders', (o) => o.select('total'))
       .all(),
+    pool.query<{ id: string; email: string; role: string }>(`SELECT id, email, role FROM "user"`),
   ])
 
   const mappedProducts = products.map((p) => ({
@@ -53,6 +57,8 @@ export default async function StoreAdmin() {
     createdAt: (r.createdAt as string).slice(0, 10),
   }))
 
+  const roleMap = new Map(authUsers.rows.map((u) => [u.email, u.role]))
+
   const customers: Customer[] = users.map((u) => ({
     id: u.id,
     name: u.name ?? u.email,
@@ -60,6 +66,7 @@ export default async function StoreAdmin() {
     orders: u.orders.length,
     totalSpent: u.orders.reduce((s, o) => s + o.total, 0),
     joinedAt: (u.createdAt as string).slice(0, 10),
+    role: roleMap.get(u.email) ?? 'customer',
   }))
 
   // New tables (sales, discounts, promotions) — available after migration + prisma contract emit
@@ -72,7 +79,6 @@ export default async function StoreAdmin() {
       initialProducts={mappedProducts}
       initialOrders={mappedOrders}
       initialReturns={mappedReturns}
-      initialSales={sales}
       initialDiscounts={discounts}
       initialPromotions={promotions}
       initialCustomers={customers}

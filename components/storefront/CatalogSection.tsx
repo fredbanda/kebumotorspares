@@ -34,9 +34,6 @@ export function CatalogSection({
           <p className="eyebrow">THE GARAGE</p>
           <h2>Find your edge.</h2>
         </div>
-        <button className="text-button" onClick={onManageInventory}>
-          Manage inventory <ArrowRight />
-        </button>
       </div>
 
       <div className="category-bar">

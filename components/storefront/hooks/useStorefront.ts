@@ -1,13 +1,16 @@
+'use client'
+
 import { useEffect, useMemo, useState } from 'react'
 import { createAuthClient } from 'better-auth/client'
-import { CartLine, Product, starterProducts } from '@/lib/catalog'
+import { CartLine, Product } from '@/lib/catalog'
+import { useProducts } from '@/components/products/ProductProvider'
 
 const authClient = createAuthClient()
 
-export type View = 'shop' | 'product' | 'cart' | 'checkout' | 'admin'
+export type View = 'shop' | 'product' | 'cart' | 'checkout'
 
-export function useStorefront() {
-  const [products, setProducts] = useState<Product[]>(starterProducts)
+export function useStorefront({ initialProducts }: { initialProducts?: Product[] }) {
+  const { products: contextProducts, setProducts, addProduct: addProductToContext } = useProducts()
   const [category, setCategory] = useState('All parts')
   const [query, setQuery] = useState('')
   const [cart, setCart] = useState<CartLine[]>([])
@@ -20,6 +23,9 @@ export function useStorefront() {
   const [authOpen, setAuthOpen] = useState(false)
 
   useEffect(() => {
+    if (initialProducts && contextProducts.length === 0) {
+      setProducts(initialProducts)
+    }
     authClient.getSession().then(({ data }) => setSession(data as typeof session))
   }, [])
 
@@ -28,6 +34,8 @@ export function useStorefront() {
     setSession(null)
     setView('shop')
   }
+
+  const products = contextProducts
 
   const filtered = useMemo(
     () =>
@@ -73,14 +81,21 @@ export function useStorefront() {
     )
   }
 
-  function addProduct(product: Product) {
-    setProducts((items) => [product, ...items])
-    setView('shop')
-    setNotice('Product added to inventory')
+  async function addProduct(product: Omit<Product, 'id'>) {
+    try {
+      const newProduct = await addProductToContext(product)
+      if (newProduct) {
+        setView('shop')
+        setNotice('Product added to inventory')
+      }
+    } catch (error) {
+      console.error('Error adding product:', error)
+    }
   }
 
   return {
     products,
+    setProducts,
     category, setCategory,
     query, setQuery,
     cart, setCart,

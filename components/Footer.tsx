@@ -18,14 +18,23 @@ const Footer = () => {
 
   // Categories data
   const categories = [
-    { name: "Engine Parts", href: "/categories/engine" },
-    { name: "Brakes", href: "/categories/brakes" },
+    { name: "Engine", href: "/categories/engine" },
+    { name: "Axle Drive", href: "/categories/axle-drive"},
+    { name: "Brakes System", href: "/categories/brakes-system" },
+    { name: "Clutch System", href: "/categories/cluth-system"},
+    { name: "Control Cables", href: "/categories/control-cables"},
     { name: "Suspension", href: "/categories/suspension" },
     { name: "Exhaust", href: "/categories/exhaust" },
     { name: "Electrical", href: "/categories/electrical" },
-    { name: "Body & Styling", href: "/categories/body" },
-    { name: "Wheels & Tires", href: "/categories/wheels" },
+    { name: "Body", href: "/categories/body" },
+    { name: "Fuel Supply System", href: "/categories/fuel-supply-system" },
+    {name: "Spark / Glow Iginition", href: "/categories/spark-glow-ignition" },
+    { name: "Cooling System", href: "/categories/cooling-system" },
     { name: "Accessories", href: "/categories/accessories" },
+    { name: "Specialized", href: "/categories/specialized" },
+    { name: "Tools and Accessories", href: "/categories/tools-and-accessories" },
+    { name: "Steering / Suspension", href: "/categories/steering-suspension" },
+
   ];
 
   // Social links

@@ -1,6 +1,6 @@
 'use client'
 
-import { AdminView } from './storefront/AdminView'
+import { useRouter } from 'next/navigation'
 import { AuthModal } from './storefront/AuthModal'
 import { CartView } from './storefront/CartView'
 import { CheckoutView } from './storefront/CheckoutView'
@@ -10,49 +10,31 @@ import { ShopView } from './storefront/ShopView'
 import { Ticker } from './storefront/Ticker'
 import { useStorefront } from './storefront/hooks/useStorefront'
 
-export function Storefront() {
-  const {
-    products,
-    category, setCategory,
-    query, setQuery,
-    cart, setCart,
-    wishlist,
-    view, setView,
-    selected,
-    mobileOpen, setMobileOpen,
-    notice,
-    filtered,
-    cartCount,
-    cartTotal,
-    addToCart,
-    toggleWish,
-    showProduct,
-    updateCartLine,
-    addProduct,
-    session, setSession,
-    authOpen, setAuthOpen,
-    signOut,
-  } = useStorefront()
+export function Storefront({ initialProducts }: { initialProducts?: import('@/lib/catalog').Product[] }) {
+  const storefront = useStorefront({ initialProducts })
+  const { selected } = storefront
+
+  const router = useRouter()
 
   function handleAccountClick() {
-    if (session) {
-      signOut()
+    if (storefront.session) {
+      storefront.signOut()
     } else {
-      setAuthOpen(true)
+      storefront.setAuthOpen(true)
     }
   }
 
   function handleCheckout() {
-    if (!session) {
-      setAuthOpen(true)
+    if (!storefront.session) {
+      storefront.setAuthOpen(true)
     } else {
-      setView('checkout')
+      storefront.setView('checkout')
     }
   }
 
   function handlePaymentSuccess() {
-    setCart([])
-    setView('shop')
+    storefront.setCart([])
+    storefront.setView('shop')
   }
 
   return (
@@ -60,88 +42,76 @@ export function Storefront() {
       <Ticker />
 
       <Header
-        cartCount={cartCount}
-        mobileOpen={mobileOpen}
-        onToggleMobile={() => setMobileOpen(!mobileOpen)}
-        onLogoClick={() => { setView('shop'); setMobileOpen(false) }}
-        onCartClick={() => setView('cart')}
+        cartCount={storefront.cartCount}
+        mobileOpen={storefront.mobileOpen}
+        onToggleMobile={() => storefront.setMobileOpen(!storefront.mobileOpen)}
+        onLogoClick={() => { storefront.setView('shop'); storefront.setMobileOpen(false) }}
+        onCartClick={() => storefront.setView('cart')}
         onAccountClick={handleAccountClick}
-        session={session}
+        session={storefront.session}
       />
 
-      {view === 'shop' && (
+      {storefront.view === 'shop' && (
         <ShopView
-          filtered={filtered}
-          category={category}
-          query={query}
-          wishlist={wishlist}
-          onCategoryChange={setCategory}
-          onQueryChange={setQuery}
-          onWish={toggleWish}
-          onView={showProduct}
-          onAdd={addToCart}
-          onManageInventory={() => setView('admin')}
+          filtered={storefront.filtered}
+          category={storefront.category}
+          query={storefront.query}
+          wishlist={storefront.wishlist}
+          onCategoryChange={storefront.setCategory}
+          onQueryChange={storefront.setQuery}
+          onWish={storefront.toggleWish}
+          onView={storefront.showProduct}
+          onAdd={storefront.addToCart}
+          onManageInventory={() => router.push('/store-admin')}
         />
       )}
 
-      {view === 'product' && selected && (
+      {storefront.view === 'product' && selected ? (
         <ProductDetail
           product={selected}
-          wished={wishlist.includes(selected.id)}
-          onWish={() => toggleWish(selected.id)}
-          onAdd={() => addToCart(selected)}
-          onBack={() => setView('shop')}
+          wished={storefront.wishlist.includes(selected.id)}
+          onWish={() => storefront.toggleWish(selected.id)}
+          onAdd={() => storefront.addToCart(selected)}
+          onBack={() => storefront.setView('shop')}
         />
-      )}
+      ) : null}
 
-      {view === 'cart' && (
+      {storefront.view === 'cart' && (
         <CartView
-          cart={cart}
-          total={cartTotal}
-          onBack={() => setView('shop')}
-          onChange={updateCartLine}
+          cart={storefront.cart}
+          total={storefront.cartTotal}
+          onBack={() => storefront.setView('shop')}
+          onChange={storefront.updateCartLine}
           onCheckout={handleCheckout}
         />
       )}
 
-      {view === 'checkout' && session && (
+      {storefront.view === 'checkout' && storefront.session && (
         <CheckoutView
-          cart={cart}
-          total={cartTotal}
-          userId={session.user.id}
-          onBack={() => setView('cart')}
+          cart={storefront.cart}
+          total={storefront.cartTotal}
+          userId={storefront.session.user.id}
+          onBack={() => storefront.setView('cart')}
           onSuccess={handlePaymentSuccess}
         />
       )}
 
-      {view === 'admin' && (
-        <AdminView
-          initialProducts={products}
-          initialOrders={[]}
-          initialReturns={[]}
-          initialSales={[]}
-          initialDiscounts={[]}
-          initialPromotions={[]}
-          initialCustomers={[]}
-        />
-      )}
-
-      {authOpen && (
+      {storefront.authOpen && (
         <AuthModal
-          onClose={() => setAuthOpen(false)}
+          onClose={() => storefront.setAuthOpen(false)}
           onSuccess={async () => {
             const { createAuthClient } = await import('better-auth/client')
             const client = createAuthClient()
             const { data } = await client.getSession()
-            setSession(data as typeof session)
-            setAuthOpen(false)
+            storefront.setSession(data as typeof storefront.session)
+            storefront.setAuthOpen(false)
           }}
         />
       )}
 
-      {notice && (
+      {storefront.notice && (
         <div className="toast" role="status">
-          {notice}
+          {storefront.notice}
         </div>
       )}
     </div>

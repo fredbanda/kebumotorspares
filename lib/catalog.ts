@@ -72,6 +72,7 @@ export type Customer = {
   orders: number
   totalSpent: number
   joinedAt: string
+  role?: string
 }
 
 export const categories = ['Engine', 'Braking', 'Suspension', 'Electrical', 'Exterior']

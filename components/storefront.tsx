@@ -10,8 +10,8 @@ import { ShopView } from './storefront/ShopView'
 import { Ticker } from './storefront/Ticker'
 import { useStorefront } from './storefront/hooks/useStorefront'
 
-export function Storefront({ initialProducts }: { initialProducts?: import('@/lib/catalog').Product[] }) {
-  const storefront = useStorefront({ initialProducts })
+export function Storefront({ initialProducts, initialCategory }: { initialProducts?: import('@/lib/catalog').Product[]; initialCategory?: string }) {
+  const storefront = useStorefront({ initialProducts, initialCategory })
   const { selected } = storefront
 
   const router = useRouter()

@@ -9,9 +9,9 @@ const authClient = createAuthClient()
 
 export type View = 'shop' | 'product' | 'cart' | 'checkout'
 
-export function useStorefront({ initialProducts }: { initialProducts?: Product[] }) {
+export function useStorefront({ initialProducts, initialCategory }: { initialProducts?: Product[]; initialCategory?: string }) {
   const { products: contextProducts, setProducts, addProduct: addProductToContext } = useProducts()
-  const [category, setCategory] = useState('All parts')
+  const [category, setCategory] = useState(initialCategory ? initialCategory.charAt(0).toUpperCase() + initialCategory.slice(1) : 'All parts')
   const [query, setQuery] = useState('')
   const [cart, setCart] = useState<CartLine[]>([])
   const [wishlist, setWishlist] = useState<string[]>([])
@@ -25,6 +25,9 @@ export function useStorefront({ initialProducts }: { initialProducts?: Product[]
   useEffect(() => {
     if (initialProducts && contextProducts.length === 0) {
       setProducts(initialProducts)
+    }
+    if (initialCategory) {
+      setCategory(initialCategory.charAt(0).toUpperCase() + initialCategory.slice(1))
     }
     authClient.getSession().then(({ data }) => setSession(data as typeof session))
   }, [])

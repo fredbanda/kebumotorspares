@@ -75,7 +75,21 @@ export type Customer = {
   role?: string
 }
 
-export const categories = ['Engine', 'Braking', 'Suspension', 'Electrical', 'Exterior']
+//export const categories = ['Engine', 'Braking', 'Suspension', 'Electrical', 'Exterior']
+export const categories = ['Engine', 'Axle Drive', 'Brake System', 'Clutch System',
+'Control Cables',
+'Suspension',
+'Exhaust',
+'Electrical',
+'Body',
+'Fuel Supply System',
+'Spark / Glow Iginition',
+'Cooling System',
+'Accessories',
+'Specialized',
+'Tools and Accessories',
+  'Steering / Suspension',
+]
 
 export const starterProducts: Product[] = [
   { id: 'bp-001', name: 'Vented Performance Rotors', category: 'Braking', price: 189.99, costPrice: 90, rating: 4.9, stock: 18, sku: 'BRK-VPR-001', badge: 'Best seller', description: 'Two-piece vented rotors engineered for confident stopping and consistent heat management.', image: 'https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?auto=format&fit=crop&w=1000&q=85' },

@@ -1,11 +1,17 @@
-import { db } from '@/prisma/db'
-import { Storefront } from '@/components/storefront'
-import { starterProducts, Product } from '@/lib/catalog'
+import { db } from "@/prisma/db";
+import { Storefront } from "@/components/storefront";
+import { starterProducts, Product } from "@/lib/catalog";
 
-export default async function CategoryPage({ params }: { params: { slug: string } }) {
-  const dbProducts = await db.orm.public.Product.orderBy((p) => p.createdAt.desc()).all()
-  const dbNames = new Set(dbProducts.map((p) => p.name.toLowerCase()))
-  const mappedDbProducts = dbProducts.map((p) => ({
+export default async function CategoryPage({
+  params,
+}: {
+  params: { slug: string };
+}) {
+  const dbProducts = await db.product.findMany({
+    orderBy: { createdAt: "desc" },
+  });
+  const dbNames = new Set(dbProducts.map((p: any) => p.name.toLowerCase()));
+  const mappedDbProducts = dbProducts.map((p: any) => ({
     id: p.id,
     name: p.name,
     category: p.category,
@@ -15,12 +21,17 @@ export default async function CategoryPage({ params }: { params: { slug: string 
     stock: p.active ? 1 : 0,
     sku: p.sku,
     badge: undefined,
-    description: p.description ?? '',
-    image: p.imageUrl ?? '',
+    description: p.description ?? "",
+    image: p.imageUrl ?? "",
     active: p.active,
-  }))
-  const seedProducts = starterProducts.filter((p) => !dbNames.has(p.name.toLowerCase()))
-  const products = [...mappedDbProducts, ...seedProducts]
+  }));
+  const seedProducts = starterProducts.filter(
+    (p) => !dbNames.has(p.name.toLowerCase())
+  );
+  const products = [...mappedDbProducts, ...seedProducts];
 
-  return <Storefront initialProducts={products} initialCategory={params.slug} />
+  return (
+    <Storefront initialProducts={products} initialCategory={params.slug} />
+  );
 }
+

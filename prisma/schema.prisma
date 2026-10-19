@@ -1,3 +1,17 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+datasource db {
+  provider = "postgresql"
+}
+generator client {
+  provider        = "prisma-client"
+  output          = "./generated"
+  previewFeatures = ["driverAdapters"]
+}
+
 enum DeliveryStatus {
   pending
   delivered
@@ -39,8 +53,8 @@ model User {
   address   String?
   tel       String?
   whatsapp  String?
-  createdAt TimestamptzString        @default(now())
-  updatedAt temporal.updatedAtString()
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   orders            Order[]
   deliveryAddresses DeliveryAddress[]
@@ -63,24 +77,24 @@ model Product {
   price       Float
   costPrice   Float?
   active      Boolean @default(true)
-  createdAt   TimestamptzString        @default(now())
-  updatedAt   temporal.updatedAtString()
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
-  orderItems      OrderItem[]
-  reviews         Review[]
-  wishlists       Wishlist[]
-  inventory       Inventory?
-  promotionItems  PromotionItem[]
+  orderItems     OrderItem[]
+  reviews        Review[]
+  wishlists      Wishlist[]
+  inventory      Inventory?
+  promotionItems PromotionItem[]
 
   @@map("products")
 }
 
 model Inventory {
-  id        String @id @default(uuid())
-  productId String @unique
-  quantity  Int    @default(0)
-  lowStock  Int    @default(5)
-  updatedAt temporal.updatedAtString()
+  id        String   @id @default(uuid())
+  productId String   @unique
+  quantity  Int      @default(0)
+  lowStock  Int      @default(5)
+  updatedAt DateTime @updatedAt
 
   product Product @relation(fields: [productId], references: [id])
 
@@ -88,14 +102,14 @@ model Inventory {
 }
 
 model Order {
-  id        String @id @default(uuid())
+  id        String   @id @default(uuid())
   userId    String
   productId String
   quantity  Int
   total     Float
   status    String
-  createdAt TimestamptzString        @default(now())
-  updatedAt temporal.updatedAtString()
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   user       User        @relation(fields: [userId], references: [id])
   orderItems OrderItem[]
@@ -106,16 +120,16 @@ model Order {
 }
 
 model OrderItem {
-  id                String @id @default(uuid())
+  id                String   @id @default(uuid())
   orderId           String
   productId         String
   quantity          Int
   total             Float
   fulfillmentStatus String
   paymentStatus     String
-  deliveryStatus    String @default("pending")
-  createdAt         TimestamptzString        @default(now())
-  updatedAt         temporal.updatedAtString()
+  deliveryStatus    String   @default("pending")
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
 
   order   Order   @relation(fields: [orderId], references: [id])
   product Product @relation(fields: [productId], references: [id])
@@ -124,15 +138,15 @@ model OrderItem {
 }
 
 model DeliveryAddress {
-  id        String @id @default(uuid())
+  id        String   @id @default(uuid())
   userId    String
   address   String
   city      String
   state     String
   zip       String
   country   String
-  createdAt TimestamptzString        @default(now())
-  updatedAt temporal.updatedAtString()
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   user User @relation(fields: [userId], references: [id])
 
@@ -140,15 +154,15 @@ model DeliveryAddress {
 }
 
 model Payment {
-  id            String @id @default(uuid())
+  id            String   @id @default(uuid())
   userId        String
   orderId       String
   amount        Float
   status        String
   paymentId     String
   paymentMethod String
-  createdAt     TimestamptzString        @default(now())
-  updatedAt     temporal.updatedAtString()
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 
   user  User  @relation(fields: [userId], references: [id])
   order Order @relation(fields: [orderId], references: [id])
@@ -157,15 +171,15 @@ model Payment {
 }
 
 model Returns {
-  id          String @id @default(uuid())
-  orderId     String
-  userId      String
-  reason      String
-  status      String @default("requested")
+  id           String   @id @default(uuid())
+  orderId      String
+  userId       String
+  reason       String
+  status       String   @default("requested")
   refundAmount Float?
-  notes       String?
-  createdAt   TimestamptzString        @default(now())
-  updatedAt   temporal.updatedAtString()
+  notes        String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
   order Order @relation(fields: [orderId], references: [id])
   user  User  @relation(fields: [userId], references: [id])
@@ -174,43 +188,43 @@ model Returns {
 }
 
 model Sale {
-  id          String @id @default(uuid())
-  orderId     String @unique
-  revenue     Float
-  cost        Float?
-  profit      Float?
-  channel     String @default("online")
-  createdAt   TimestamptzString        @default(now())
+  id        String   @id @default(uuid())
+  orderId   String   @unique
+  revenue   Float
+  cost      Float?
+  profit    Float?
+  channel   String   @default("online")
+  createdAt DateTime @default(now())
 
   @@map("sales")
 }
 
 model Discount {
-  id          String   @id @default(uuid())
-  code        String   @unique
-  type        String
-  value       Float
-  minOrder    Float?
-  maxUses     Int?
-  usedCount   Int      @default(0)
-  active      Boolean  @default(true)
-  expiresAt   TimestamptzString?
-  createdAt   TimestamptzString        @default(now())
-  updatedAt   temporal.updatedAtString()
+  id        String    @id @default(uuid())
+  code      String    @unique
+  type      String
+  value     Float
+  minOrder  Float?
+  maxUses   Int?
+  usedCount Int       @default(0)
+  active    Boolean   @default(true)
+  expiresAt DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 
   @@map("discounts")
 }
 
 model Promotion {
-  id          String   @id @default(uuid())
+  id          String    @id @default(uuid())
   title       String
   description String?
   bannerUrl   String?
-  active      Boolean  @default(true)
-  startsAt    TimestamptzString?
-  endsAt      TimestamptzString?
-  createdAt   TimestamptzString        @default(now())
-  updatedAt   temporal.updatedAtString()
+  active      Boolean   @default(true)
+  startsAt    DateTime?
+  endsAt      DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 
   items PromotionItem[]
 
@@ -230,13 +244,13 @@ model PromotionItem {
 }
 
 model Review {
-  id        String @id @default(uuid())
+  id        String   @id @default(uuid())
   userId    String
   productId String
   rating    Int
   comment   String
-  createdAt TimestamptzString        @default(now())
-  updatedAt temporal.updatedAtString()
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   user    User    @relation(fields: [userId], references: [id])
   product Product @relation(fields: [productId], references: [id])
@@ -245,11 +259,11 @@ model Review {
 }
 
 model Wishlist {
-  id        String @id @default(uuid())
+  id        String   @id @default(uuid())
   userId    String
   productId String
-  createdAt TimestamptzString        @default(now())
-  updatedAt temporal.updatedAtString()
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   user    User    @relation(fields: [userId], references: [id])
   product Product @relation(fields: [productId], references: [id])

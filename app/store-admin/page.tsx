@@ -1,31 +1,42 @@
-import { db } from '@/prisma/db'
-import { AdminView } from '@/components/storefront/AdminView'
-import type { Order, Return, Sale, Discount, Promotion, Customer, Product } from '@/lib/catalog'
-import { Pool } from 'pg'
+import { db } from "@/prisma/db";
+import { AdminView } from "@/components/storefront/AdminView";
+import type {
+  Order,
+  Return,
+  Sale,
+  Discount,
+  Promotion,
+  Customer,
+  Product,
+} from "@/lib/catalog";
+import { Pool } from "pg";
 
-const pool = new Pool({ connectionString: process.env.DATABASE_URL })
+const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 
 export default async function StoreAdmin() {
   const [products, orders, returns, users, authUsers] = await Promise.all([
-    db.orm.public.Product.select('id', 'name', 'category', 'slug', 'description', 'imageUrl', 'price', 'costPrice', 'active', 'createdAt').orderBy((p) => p.createdAt.desc()).all(),
-    db.orm.public.Order
-      .orderBy((o) => o.createdAt.desc())
-      .include('user', (u) => u.select('name', 'email'))
-      .include('orderItems', (i) => i.select('id'))
-      .all(),
-    db.orm.public.Returns
-      .select('id', 'orderId', 'userId', 'reason', 'status', 'createdAt')
-      .orderBy((r) => r.createdAt.desc())
-      .include('user', (u) => u.select('name'))
-      .all(),
-    db.orm.public.User
-      .orderBy((u) => u.createdAt.desc())
-      .include('orders', (o) => o.select('total'))
-      .all(),
-    pool.query<{ id: string; email: string; role: string }>(`SELECT id, email, role FROM "user"`),
-  ])
+    db.product.findMany({
+      select: { id: true, name: true, category: true, slug: true, description: true, imageUrl: true, price: true, costPrice: true, active: true, createdAt: true },
+      orderBy: { createdAt: "desc" },
+    }),
+    db.order.findMany({
+      orderBy: { createdAt: "desc" },
+      include: { user: { select: { name: true, email: true } }, orderItems: { select: { id: true } } },
+    }),
+    db.returns.findMany({
+      select: { id: true, orderId: true, userId: true, reason: true, status: true, createdAt: true, user: { select: { name: true } } },
+      orderBy: { createdAt: "desc" },
+    }),
+    db.user.findMany({
+      orderBy: { createdAt: "desc" },
+      include: { orders: { select: { total: true } } },
+    }),
+    pool.query<{ id: string; email: string; role: string }>(
+      `SELECT id, email, role FROM "user"`
+    ),
+  ]);
 
-  const mappedProducts = products.map((p) => ({
+  const mappedProducts = products.map((p: any) => ({
     id: p.id,
     name: p.name,
     category: p.category,
@@ -33,31 +44,31 @@ export default async function StoreAdmin() {
     price: p.price,
     stock: 0,
     rating: 5,
-    description: p.description ?? '',
-    image: p.imageUrl ?? '',
+    description: p.description ?? "",
+    image: p.imageUrl ?? "",
     active: p.active,
-  }))
+  }));
 
   const mappedOrders: Order[] = orders.map((o) => ({
     id: o.id,
-    customer: o.user?.name ?? o.user?.email ?? '',
-    email: o.user?.email ?? '',
+    customer: o.user?.name ?? o.user?.email ?? "",
+    email: o.user?.email ?? "",
     total: o.total,
-    status: o.status as Order['status'],
+    status: o.status as Order["status"],
     items: o.orderItems.length,
-    createdAt: (o.createdAt as string).slice(0, 10),
-  }))
+    createdAt: o.createdAt.toISOString().slice(0, 10),
+  }));
 
   const mappedReturns: Return[] = returns.map((r) => ({
     id: r.id,
     orderId: r.orderId,
-    customer: r.user?.name ?? '',
+    customer: r.user?.name ?? "",
     reason: r.reason,
-    status: r.status as Return['status'],
-    createdAt: (r.createdAt as string).slice(0, 10),
-  }))
+    status: r.status as Return["status"],
+    createdAt: r.createdAt.toISOString().slice(0, 10),
+  }));
 
-  const roleMap = new Map(authUsers.rows.map((u) => [u.email, u.role]))
+  const roleMap = new Map(authUsers.rows.map((u) => [u.email, u.role]));
 
   const customers: Customer[] = users.map((u) => ({
     id: u.id,
@@ -65,14 +76,14 @@ export default async function StoreAdmin() {
     email: u.email,
     orders: u.orders.length,
     totalSpent: u.orders.reduce((s, o) => s + o.total, 0),
-    joinedAt: (u.createdAt as string).slice(0, 10),
-    role: roleMap.get(u.email) ?? 'customer',
-  }))
+    joinedAt: u.createdAt.toISOString().slice(0, 10),
+    role: roleMap.get(u.email) ?? "customer",
+  }));
 
   // New tables (sales, discounts, promotions) — available after migration + prisma contract emit
-  const sales: Sale[] = []
-  const discounts: Discount[] = []
-  const promotions: Promotion[] = []
+  const sales: Sale[] = [];
+  const discounts: Discount[] = [];
+  const promotions: Promotion[] = [];
 
   return (
     <AdminView
@@ -83,5 +94,6 @@ export default async function StoreAdmin() {
       initialPromotions={promotions}
       initialCustomers={customers}
     />
-  )
+  );
 }
+

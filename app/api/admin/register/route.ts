@@ -20,13 +20,17 @@ export async function POST(req: NextRequest) {
     // Already registered — just promote
     userId = existing.rows[0].id
   } else {
-    const { data, error } = await auth.api.signUpEmail({
-      body: { name, email, password },
-      headers: req.headers,
-    })
-    if (error || !data?.user) {
-      console.error('[admin/register] signUpEmail error:', error)
-      return NextResponse.json({ error: error?.message ?? 'Registration failed.' }, { status: 400 })
+    let data: any
+    try {
+      const result = await auth.api.signUpEmail({
+        body: { name, email, password },
+        headers: req.headers,
+      })
+      data = result.data
+      if (!data?.user) throw new Error(result.error?.message ?? 'Registration failed.')
+    } catch (err: any) {
+      console.error('[admin/register] signUpEmail error:', err)
+      return NextResponse.json({ error: err?.message ?? 'Registration failed.' }, { status: 400 })
     }
     userId = data.user.id
   }

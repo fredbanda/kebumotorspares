@@ -77,7 +77,7 @@ export default function AdminLoginPage() {
   return (
     <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--background)' }}>
       <div className="auth-modal" style={{ position: 'relative' }}>
-        <p className="eyebrow">INTERNAL GARAGE</p>
+        <p className="eyebrow">ADMIN PORTAL</p>
         <h2 className="auth-title">{mode === 'login' ? 'Admin sign in' : 'Admin registration'}</h2>
 
         {mode === 'login' ? (

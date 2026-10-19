@@ -200,7 +200,7 @@ export function AdminView({ initialProducts, initialOrders, initialReturns, init
     <main className="admin-page">
       <div className="admin-heading">
         <div>
-          <p className="eyebrow">INTERNAL GARAGE</p>
+          <p className="eyebrow">ADMIN PORTAL</p>
           <h1>Admin Dashboard</h1>
         </div>
         <div style={{ display: 'flex', gap: 24, flexWrap: 'wrap' }}>

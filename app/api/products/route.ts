@@ -3,9 +3,9 @@ import { db } from "@/prisma/db";
 import { starterProducts, Product } from "@/lib/catalog";
 
 export async function GET(req: NextRequest) {
-  const dbProducts = await db.orm.public.Product.orderBy((p) =>
-    p.createdAt.desc()
-  ).all();
+  const dbProducts = await db.product.findMany({
+    orderBy: { createdAt: "desc" },
+  });
 
   const dbNames = new Set(dbProducts.map((p) => p.name.toLowerCase()));
 

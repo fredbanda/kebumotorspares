@@ -20,19 +20,24 @@ export async function POST(req: NextRequest) {
     // Already registered — just promote
     userId = existing.rows[0].id
   } else {
-    let data: any
     try {
       const result = await auth.api.signUpEmail({
         body: { name, email, password },
         headers: req.headers,
       })
-      data = result.data
-      if (!data?.user) throw new Error(result.error?.message ?? 'Registration failed.')
+      if (!result?.user) {
+        return NextResponse.json({ error: 'Registration failed. No user returned.' }, { status: 400 })
+      }
+      userId = result.user.id
     } catch (err: any) {
       console.error('[admin/register] signUpEmail error:', err)
-      return NextResponse.json({ error: err?.message ?? 'Registration failed.' }, { status: 400 })
+      const message =
+        err?.message ??
+        err?.body?.message ??
+        err?.statusMessage ??
+        'Registration failed.'
+      return NextResponse.json({ error: message }, { status: 400 })
     }
-    userId = data.user.id
   }
 
   await pool.query(`UPDATE "user" SET "role" = 'admin' WHERE "id" = $1`, [userId])

@@ -5,9 +5,17 @@ const database = new Pool({
   connectionString: process.env.DATABASE_URL,
 });
 
+const baseURL = process.env.BETTER_AUTH_URL || "http://localhost:3000/";
+
 export const auth = betterAuth({
   database: database,
-  baseURL: process.env.BETTER_AUTH_URL || "http://localhost:3000/",
+  baseURL: baseURL,
+  trustedOrigins: [
+    baseURL,
+    "https://www.kebumotorspares.co.za",
+    "https://kebumotorspares.co.za",
+    "http://localhost:3000",
+  ],
   emailAndPassword: { enabled: true },
   socialProviders: {
     google: {

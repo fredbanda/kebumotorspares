@@ -19,15 +19,17 @@ export async function POST(req: NextRequest) {
     Date.now();
   const sku = body.sku?.trim() || slug.toUpperCase().slice(0, 20);
   const product = await db.product.create({
-    name: body.name,
-    slug,
-    sku,
-    category: body.category,
-    description: body.description ?? null,
-    imageUrl: body.imageUrl ?? null,
-    price: Number(body.price),
-    costPrice: body.costPrice ? Number(body.costPrice) : null,
-    active: true,
+    data: {
+      name: body.name,
+      slug,
+      sku,
+      category: body.category,
+      description: body.description ?? null,
+      imageUrl: body.imageUrl ?? null,
+      price: Number(body.price),
+      costPrice: body.costPrice ? Number(body.costPrice) : null,
+      active: true,
+    },
   });
   return NextResponse.json(product, { status: 201 });
 }

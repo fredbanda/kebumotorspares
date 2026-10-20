@@ -3,14 +3,6 @@ import { db } from "@/prisma/db";
 
 export async function GET() {
   const returns = await db.returns.findMany({
-    select: {
-      id: true,
-      orderId: true,
-      userId: true,
-      reason: true,
-      status: true,
-      createdAt: true,
-    },
     orderBy: { createdAt: "desc" },
     include: { user: { select: { name: true } } },
   });

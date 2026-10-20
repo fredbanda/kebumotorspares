@@ -12,7 +12,7 @@ export async function GET() {
     email: u.email,
     orders: u.orders.length,
     totalSpent: u.orders.reduce((s, o) => s + o.total, 0),
-    joinedAt: (u.createdAt as string).slice(0, 10),
+    joinedAt: new Date(u.createdAt).toISOString().slice(0, 10),
   }));
   return NextResponse.json(customers);
 }

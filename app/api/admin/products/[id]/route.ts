@@ -18,7 +18,10 @@ export async function PATCH(
     updateData.costPrice = body.costPrice ? Number(body.costPrice) : null;
   if (body.active !== undefined) updateData.active = body.active;
 
-  const product = await db.orm.public.Product.where({ id }).update(updateData);
+  const product = await db.product.update({
+    where: { id },
+    data: updateData,
+  });
   return NextResponse.json(product);
 }
 
@@ -27,7 +30,9 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params;
-  await db.orm.public.Product.where({ id }).delete();
+  await db.product.delete({
+    where: { id },
+  });
   return NextResponse.json({ success: true });
 }
 

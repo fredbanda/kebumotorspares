@@ -2,9 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/prisma/db";
 
 export async function GET() {
-  const products = await db.orm.public.Product.orderBy((p) =>
-    p.createdAt.desc()
-  ).all();
+  const products = await db.product.findMany({
+    orderBy: { createdAt: "desc" },
+  });
   return NextResponse.json(products);
 }
 
@@ -18,7 +18,7 @@ export async function POST(req: NextRequest) {
     "-" +
     Date.now();
   const sku = body.sku?.trim() || slug.toUpperCase().slice(0, 20);
-  const product = await db.orm.public.Product.create({
+  const product = await db.product.create({
     name: body.name,
     slug,
     sku,

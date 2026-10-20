@@ -91,6 +91,8 @@ export const categories = ['Engine', 'Axle Drive', 'Brake System', 'Clutch Syste
   'Steering / Suspension',
 ]
 
+// @deprecated — Starter products for DB seeding only.
+// The storefront and admin now read products directly from the database.
 export const starterProducts: Product[] = [
   { id: 'bp-001', name: 'Vented Performance Rotors', category: 'Braking', price: 189.99, costPrice: 90, rating: 4.9, stock: 18, sku: 'BRK-VPR-001', badge: 'Best seller', description: 'Two-piece vented rotors engineered for confident stopping and consistent heat management.', image: 'https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?auto=format&fit=crop&w=1000&q=85' },
   { id: 'en-002', name: 'Cold Air Intake System', category: 'Engine', price: 249.0, costPrice: 110, rating: 4.8, stock: 9, sku: 'ENG-CAI-002', badge: 'New', description: 'A direct-fit intake that brings cooler, denser air to your engine for sharper throttle response.', image: 'https://images.unsplash.com/photo-1487754180451-c456f719a1fc?auto=format&fit=crop&w=1000&q=85' },

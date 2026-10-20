@@ -51,44 +51,52 @@ export async function POST(req: NextRequest) {
     }
 
     // Create order
-    const order = await db.orm.public.Order.create({
-      userId,
-      productId: cart[0].productId,
-      quantity: cart.reduce((s, i) => s + i.quantity, 0),
-      total,
-      status: "processing",
+    const order = await db.order.create({
+      data: {
+        userId,
+        productId: cart[0].productId,
+        quantity: cart.reduce((s, i) => s + i.quantity, 0),
+        total,
+        status: "processing",
+      },
     });
 
     // Create order items
     await Promise.all(
       cart.map((item) =>
-        db.orm.public.OrderItem.create({
-          orderId: order.id,
-          productId: item.productId,
-          quantity: item.quantity,
-          total: item.price * item.quantity,
-          fulfillmentStatus: "pending",
-          paymentStatus: "paid",
-          deliveryStatus: "pending",
+        db.orderItem.create({
+          data: {
+            orderId: order.id,
+            productId: item.productId,
+            quantity: item.quantity,
+            total: item.price * item.quantity,
+            fulfillmentStatus: "pending",
+            paymentStatus: "paid",
+            deliveryStatus: "pending",
+          },
         })
       )
     );
 
     // Record payment
-    await db.orm.public.Payment.create({
-      userId,
-      orderId: order.id,
-      amount: total,
-      status: "paid",
-      paymentId: charge.id,
-      paymentMethod: "yoco",
+    await db.payment.create({
+      data: {
+        userId,
+        orderId: order.id,
+        amount: total,
+        status: "paid",
+        paymentId: charge.id,
+        paymentMethod: "yoco",
+      },
     });
 
     // Record sale for dashboard
-    await db.orm.public.Sale.create({
-      orderId: order.id,
-      revenue: total,
-      channel: "online",
+    await db.sale.create({
+      data: {
+        orderId: order.id,
+        revenue: total,
+        channel: "online",
+      },
     });
 
     return NextResponse.json({ orderId: order.id });

@@ -2,23 +2,27 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/prisma/db";
 
 export async function GET() {
-  const returns = await db.orm.public.Returns.select(
-    "id",
-    "orderId",
-    "userId",
-    "reason",
-    "status",
-    "createdAt"
-  )
-    .orderBy((r) => r.createdAt.desc())
-    .include("user", (u) => u.select("name"))
-    .all();
+  const returns = await db.returns.findMany({
+    select: {
+      id: true,
+      orderId: true,
+      userId: true,
+      reason: true,
+      status: true,
+      createdAt: true,
+    },
+    orderBy: { createdAt: "desc" },
+    include: { user: { select: { name: true } } },
+  });
   return NextResponse.json(returns);
 }
 
 export async function PATCH(req: NextRequest) {
   const { id, status } = await req.json();
-  await db.orm.public.Returns.where({ id }).update({ status });
+  await db.returns.update({
+    where: { id },
+    data: { status },
+  });
   return NextResponse.json({ ok: true });
 }
 

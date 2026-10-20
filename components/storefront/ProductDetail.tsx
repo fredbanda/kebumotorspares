@@ -1,5 +1,6 @@
 import { ArrowRight, Heart, ShoppingBag, Star } from 'lucide-react'
 import { money, Product } from '@/lib/catalog'
+import { ZoomableImage } from './ImagePopup'
 
 interface ProductDetailProps {
   product: Product
@@ -17,7 +18,7 @@ export function ProductDetail({ product, wished, onWish, onAdd, onBack }: Produc
       </button>
       <div className="detail-layout">
         <div className="detail-image">
-          <img src={product.image} alt={product.name} />
+          <ZoomableImage src={product.image} alt={product.name} />
         </div>
         <div className="detail-copy">
           <p className="eyebrow">

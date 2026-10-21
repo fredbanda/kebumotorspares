@@ -1,6 +1,6 @@
 import { Menu, Search, ShoppingBag, UserRound, X } from 'lucide-react'
 
-const navItems = ['Shop parts', 'Performance', 'Brands', 'How it works']
+const navItems = ['Shop for Parts', 'Performance', 'Brands', 'How it works']
 
 interface HeaderProps {
   cartCount: number

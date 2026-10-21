@@ -3,6 +3,8 @@ import { Storefront } from "@/components/storefront";
 import { mapDbProduct } from "@/lib/mapProduct";
 import type { Product } from "@/lib/catalog";
 
+export const dynamic = "force-dynamic";
+
 export default async function CategoryPage({
   params,
 }: {

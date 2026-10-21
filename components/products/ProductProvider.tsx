@@ -30,7 +30,21 @@ export function ProductProvider({ children }: { children: ReactNode }) {
         body: JSON.stringify(product),
       })
       if (!res.ok) throw new Error('Failed to add product')
-      const newProduct = await res.json()
+      const raw = await res.json()
+      const newProduct: Product = {
+        id: raw.id,
+        name: raw.name,
+        category: raw.category,
+        price: raw.price,
+        costPrice: raw.costPrice ?? undefined,
+        rating: 5,
+        stock: raw.active ? 1 : 0,
+        sku: raw.sku,
+        badge: undefined,
+        description: raw.description ?? '',
+        image: raw.imageUrl ?? '',
+        active: raw.active,
+      }
       setProducts((prev) => [newProduct, ...prev])
       return newProduct
     } catch (error) {

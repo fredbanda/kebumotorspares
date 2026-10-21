@@ -6,6 +6,7 @@ import { TrustRow } from './TrustRow'
 
 interface ShopViewProps {
   filtered: Product[]
+  allFiltered: Product[]
   category: string
   query: string
   wishlist: string[]
@@ -15,6 +16,9 @@ interface ShopViewProps {
   onView: (product: Product) => void
   onAdd: (product: Product) => void
   onManageInventory: () => void
+  currentPage: number
+  totalPages: number
+  onPageChange: (page: number) => void
 }
 
 export function ShopView(props: ShopViewProps) {

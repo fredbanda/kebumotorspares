@@ -54,6 +54,7 @@ export function Storefront({ initialProducts, initialCategory }: { initialProduc
       {storefront.view === 'shop' && (
         <ShopView
           filtered={storefront.filtered}
+          allFiltered={storefront.allFiltered}
           category={storefront.category}
           query={storefront.query}
           wishlist={storefront.wishlist}
@@ -63,6 +64,9 @@ export function Storefront({ initialProducts, initialCategory }: { initialProduc
           onView={storefront.showProduct}
           onAdd={storefront.addToCart}
           onManageInventory={() => router.push('/store-admin')}
+          currentPage={storefront.currentPage}
+          totalPages={storefront.totalPages}
+          onPageChange={storefront.setPage}
         />
       )}
 

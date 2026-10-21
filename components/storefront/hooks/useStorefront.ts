@@ -21,6 +21,7 @@ export function useStorefront({ initialProducts, initialCategory }: { initialPro
   const [notice, setNotice] = useState('')
   const [session, setSession] = useState<{ user: { id: string; name?: string | null; email: string } } | null>(null)
   const [authOpen, setAuthOpen] = useState(false)
+  const [page, setPage] = useState(1)
 
   useEffect(() => {
     if (initialProducts && contextProducts.length === 0) {
@@ -31,6 +32,9 @@ export function useStorefront({ initialProducts, initialCategory }: { initialPro
     }
     authClient.getSession().then(({ data }) => setSession(data as typeof session))
   }, [])
+
+  // Reset page when filters change
+  useEffect(() => { setPage(1) }, [category, query])
 
   async function signOut() {
     await authClient.signOut()
@@ -49,6 +53,12 @@ export function useStorefront({ initialProducts, initialCategory }: { initialPro
       ),
     [products, category, query]
   )
+
+  // Pagination
+  const productsPerPage = 48
+  const totalPages = Math.ceil(filtered.length / productsPerPage) || 1
+  const currentPage = Math.min(page, totalPages)
+  const paginatedProducts = filtered.slice((currentPage - 1) * productsPerPage, currentPage * productsPerPage)
 
   const cartCount = cart.reduce((sum, line) => sum + line.quantity, 0)
   const cartTotal = cart.reduce((sum, line) => sum + line.product.price * line.quantity, 0)
@@ -107,7 +117,11 @@ export function useStorefront({ initialProducts, initialCategory }: { initialPro
     selected,
     mobileOpen, setMobileOpen,
     notice,
-    filtered,
+    filtered: paginatedProducts,
+    allFiltered: filtered,
+    totalPages,
+    currentPage,
+    setPage,
     cartCount,
     cartTotal,
     addToCart,

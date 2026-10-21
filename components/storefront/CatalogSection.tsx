@@ -1,9 +1,11 @@
 import { ArrowRight, Search, SlidersHorizontal } from 'lucide-react'
 import { categories, Product } from '@/lib/catalog'
 import { ProductCard } from './ProductCard'
+import { Pagination } from './Pagination'
 
 interface CatalogSectionProps {
   filtered: Product[]
+  allFiltered: Product[]
   category: string
   query: string
   wishlist: string[]
@@ -13,10 +15,14 @@ interface CatalogSectionProps {
   onView: (product: Product) => void
   onAdd: (product: Product) => void
   onManageInventory: () => void
+  currentPage: number
+  totalPages: number
+  onPageChange: (page: number) => void
 }
 
 export function CatalogSection({
   filtered,
+  allFiltered,
   category,
   query,
   wishlist,
@@ -26,6 +32,9 @@ export function CatalogSection({
   onView,
   onAdd,
   onManageInventory,
+  currentPage,
+  totalPages,
+  onPageChange,
 }: CatalogSectionProps) {
   return (
     <section className="catalog-section" id="catalog">
@@ -75,11 +84,17 @@ export function CatalogSection({
             onAdd={() => onAdd(product)}
           />
         ))}
+
+        {filtered.length === 0 && (
+          <div className="empty-state">No parts match that search. Try another term.</div>
+        )}
       </div>
 
-      {filtered.length === 0 && (
-        <div className="empty-state">No parts match that search. Try another term.</div>
-      )}
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={onPageChange}
+      />
     </section>
   )
 }

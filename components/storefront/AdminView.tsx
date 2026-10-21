@@ -52,15 +52,20 @@ export function AdminView({ initialProducts, initialOrders, initialReturns, init
     setUploading(true)
     const reader = new FileReader()
     reader.onload = async () => {
-      const res = await fetch('/api/admin/upload', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ data: reader.result }),
-      })
-      const json = await res.json()
-      if (json.url) setProductForm((f) => ({ ...f, image: json.url }))
-      else alert(json.error ?? 'Upload failed')
-      setUploading(false)
+      try {
+        const res = await fetch('/api/admin/upload', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ data: reader.result }),
+        })
+        const json = await res.json()
+        if (json.url) setProductForm((f) => ({ ...f, image: json.url }))
+        else alert(json.error ?? 'Upload failed')
+      } catch {
+        alert('Upload failed')
+      } finally {
+        setUploading(false)
+      }
     }
     reader.readAsDataURL(file)
   }
@@ -76,6 +81,7 @@ export function AdminView({ initialProducts, initialOrders, initialReturns, init
 
   async function submitProduct(e: React.FormEvent) {
     e.preventDefault()
+    if (uploading) return
     setSaving(true)
     const productData = {
       name: productForm.name,
@@ -114,6 +120,7 @@ export function AdminView({ initialProducts, initialOrders, initialReturns, init
     } else {
       const newProduct = await addProduct(productData)
       if (newProduct) {
+        setProducts((prev) => [newProduct, ...prev])
         setProductForm(emptyProduct)
       }
     }
@@ -326,7 +333,7 @@ function ProductsTab({
           <input value={productForm.image} onChange={(e) => setProductForm({ ...productForm, image: e.target.value })} placeholder="Or paste a URL" style={{ marginTop: 4 }} />
         </label>
         <label>Description<textarea value={productForm.description} onChange={(e) => setProductForm({ ...productForm, description: e.target.value })} rows={3} /></label>
-        <button className="red-button" type="submit" disabled={saving}>{saving ? <Loader2 size={16} className="spin" /> : <>{editingId ? 'Save changes' : 'Add product'} <Plus size={16} /></>}</button>
+        <button className="red-button" type="submit" disabled={saving || uploading}>{saving ? <Loader2 size={16} className="spin" /> : <>{uploading ? 'Uploading image…' : editingId ? 'Save changes' : 'Add product'} {!uploading && <Plus size={16} />}</>}</button>
         {editingId && <button type="button" className="text-button" onClick={() => { setEditingId(null); setProductForm(emptyProduct) }}>Cancel edit</button>}
       </form>
 

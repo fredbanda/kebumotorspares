@@ -1,22 +1,35 @@
 import { Heart, Plus, Star } from 'lucide-react'
-import { money, Product } from '@/lib/catalog'
+import { money, Product, Special } from '@/lib/catalog'
+import { SpecialBadge } from './SpecialBadge'
 
 interface ProductCardProps {
   product: Product
+  special?: Special
   wished: boolean
   onWish: () => void
   onView: () => void
   onAdd: () => void
 }
 
-export function ProductCard({ product, wished, onWish, onView, onAdd }: ProductCardProps) {
+export function ProductCard({ product, special, wished, onWish, onView, onAdd }: ProductCardProps) {
+  const displayPrice = special ? special.salePrice : product.price
+  
   return (
     <article className="product-card">
       <div className="product-image" onClick={onView}>
         {product.image
           ? <img src={product.image} alt={product.name} />
           : <div style={{ width: '100%', height: '100%', background: 'var(--muted)' }} />}
-        {product.badge && <span className="badge">{product.badge}</span>}
+        {special && special.active ? (
+          <SpecialBadge
+            originalPrice={special.originalPrice}
+            salePrice={special.salePrice}
+            discountPercentage={special.discountPercentage}
+            className="product-special"
+          />
+        ) : product.badge ? (
+          <span className="badge">{product.badge}</span>
+        ) : null}
         <button
           className={wished ? 'wish active' : 'wish'}
           aria-label={wished ? 'Remove from wishlist' : 'Add to wishlist'}
@@ -36,7 +49,7 @@ export function ProductCard({ product, wished, onWish, onView, onAdd }: ProductC
           {product.name}
         </button>
         <div className="product-bottom">
-          <strong>{money(product.price)}</strong>
+          <strong>{money(displayPrice)}</strong>
           <button className="add-button" onClick={onAdd}>
             <Plus />
           </button>
@@ -45,3 +58,4 @@ export function ProductCard({ product, wished, onWish, onView, onAdd }: ProductC
     </article>
   )
 }
+

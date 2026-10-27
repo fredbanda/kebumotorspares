@@ -2,10 +2,11 @@
 
 import React, { useState } from 'react'
 import { useProducts } from '@/components/products/ProductProvider'
-import { ArrowRight, Plus, Package, ShoppingCart, RotateCcw, TrendingUp, Layers, Tag, Megaphone, Users, X, Check, Loader2, Edit2, Trash2 } from 'lucide-react'
-import { categories, money, Product, Order, Return, Sale, Discount, Promotion, Customer } from '@/lib/catalog'
+import { ArrowRight, Plus, Package, ShoppingCart, RotateCcw, TrendingUp, Layers, Tag, Megaphone, Users, Sparkles, X, Check, Loader2, Edit2, Trash2 } from 'lucide-react'
+import { categories, money, Product, Order, Return, Sale, Discount, Promotion, Customer, Special } from '@/lib/catalog'
+import { SpecialsManager } from './SpecialsManager'
 
-type Tab = 'products' | 'orders' | 'returns' | 'sales' | 'inventory' | 'discounts' | 'promotions' | 'customers'
+type Tab = 'products' | 'orders' | 'returns' | 'sales' | 'inventory' | 'discounts' | 'promotions' | 'specials' | 'customers'
 
 const tabs: { id: Tab; label: string; icon: React.ReactNode }[] = [
   { id: 'products', label: 'Products', icon: <Package size={15} /> },
@@ -15,6 +16,7 @@ const tabs: { id: Tab; label: string; icon: React.ReactNode }[] = [
   { id: 'inventory', label: 'Inventory', icon: <Layers size={15} /> },
   { id: 'discounts', label: 'Discounts', icon: <Tag size={15} /> },
   { id: 'promotions', label: 'Promotions', icon: <Megaphone size={15} /> },
+  { id: 'specials', label: 'Specials', icon: <Sparkles size={15} /> },
   { id: 'customers', label: 'Customers', icon: <Users size={15} /> },
 ]
 
@@ -277,6 +279,10 @@ export function AdminView({ initialProducts, initialOrders, initialReturns, init
           onToggle={togglePromotion}
           saving={saving}
         />
+      )}
+
+      {tab === 'specials' && (
+        <SpecialsManager initialProducts={products} />
       )}
 
       {tab === 'customers' && (

@@ -1,6 +1,6 @@
 allowBuilds:
   '@prisma/engines': false
-  esbuild: set this to true or false
+  esbuild: false
   prisma: false
 minimumReleaseAgeExclude:
   - '@next/*'

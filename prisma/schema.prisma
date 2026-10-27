@@ -6,6 +6,7 @@
 datasource db {
   provider = "postgresql"
 }
+
 generator client {
   provider        = "prisma-client"
   output          = "./generated"
@@ -67,24 +68,26 @@ model User {
 }
 
 model Product {
-  id          String  @id @default(uuid())
+  id          String   @id @default(uuid())
   name        String
-  slug        String  @unique
+  slug        String   @unique
   category    String
-  sku         String  @unique
+  sku         String   @unique
   description String?
   imageUrl    String?
   price       Float
   costPrice   Float?
-  active      Boolean @default(true)
+  active      Boolean  @default(true)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  orderItems     OrderItem[]
-  reviews        Review[]
-  wishlists      Wishlist[]
-  inventory      Inventory?
-  promotionItems PromotionItem[]
+  orderItems      OrderItem[]
+  reviews         Review[]
+  wishlists       Wishlist[]
+  inventory       Inventory?
+  promotionItems  PromotionItem[]
+  specials        Special[]
+  relatedProducts SpecialRelatedProduct[] @relation("relatedProducts")
 
   @@map("products")
 }
@@ -269,4 +272,35 @@ model Wishlist {
   product Product @relation(fields: [productId], references: [id])
 
   @@map("wishlists")
+}
+
+model Special {
+  id                 String    @id @default(uuid())
+  productId          String
+  originalPrice      Float
+  salePrice          Float
+  discountPercentage Float
+  active             Boolean   @default(true)
+  startsAt           DateTime?
+  endsAt             DateTime?
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+
+  product         Product                 @relation(fields: [productId], references: [id])
+  relatedProducts SpecialRelatedProduct[]
+
+  @@map("specials")
+}
+
+model SpecialRelatedProduct {
+  id        String   @id @default(uuid())
+  specialId String
+  productId String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  special Special @relation(fields: [specialId], references: [id])
+  product Product @relation(fields: [productId], references: [id], name: "relatedProducts")
+
+  @@map("special_related_products")
 }

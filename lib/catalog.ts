@@ -65,6 +65,18 @@ export type Promotion = {
   endsAt?: string
 }
 
+export type Special = {
+  id: string
+  productId: string
+  originalPrice: number
+  salePrice: number
+  discountPercentage: number
+  active: boolean
+  startsAt?: string
+  endsAt?: string
+  relatedProductIds?: string[]
+}
+
 export type Customer = {
   id: string
   name: string

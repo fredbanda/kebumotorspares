@@ -74,6 +74,7 @@ export function Storefront({ initialProducts, initialSpecials, initialCategory }
       {storefront.view === 'product' && selected ? (
         <ProductDetail
           product={selected}
+          special={storefront.specials.find((s) => s.productId === selected.id)}
           wished={storefront.wishlist.includes(selected.id)}
           onWish={() => storefront.toggleWish(selected.id)}
           onAdd={() => storefront.addToCart(selected)}

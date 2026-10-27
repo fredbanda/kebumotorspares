@@ -16,7 +16,20 @@ const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 export default async function StoreAdmin() {
   const [products, orders, returns, users, authUsers] = await Promise.all([
     db.product.findMany({
-      select: { id: true, name: true, category: true, slug: true, description: true, imageUrl: true, price: true, costPrice: true, active: true, createdAt: true },
+      select: {
+        id: true,
+        name: true,
+        category: true,
+        slug: true,
+        sku: true,
+        description: true,
+        imageUrl: true,
+        price: true,
+        costPrice: true,
+        active: true,
+        createdAt: true,
+        inventory: { select: { quantity: true } },
+      },
       orderBy: { createdAt: "desc" },
     }),
     db.order.findMany({
@@ -40,9 +53,9 @@ export default async function StoreAdmin() {
     id: p.id,
     name: p.name,
     category: p.category,
-    sku: p.slug,
+    sku: p.sku ?? p.slug,
     price: p.price,
-    stock: 0,
+    stock: p.inventory?.quantity ?? 0,
     rating: 5,
     description: p.description ?? "",
     image: p.imageUrl ?? "",
@@ -96,4 +109,3 @@ export default async function StoreAdmin() {
     />
   );
 }
-

@@ -111,3 +111,13 @@ export type Review = Prisma.ReviewModel
  * 
  */
 export type Wishlist = Prisma.WishlistModel
+/**
+ * Model Special
+ * 
+ */
+export type Special = Prisma.SpecialModel
+/**
+ * Model SpecialRelatedProduct
+ * 
+ */
+export type SpecialRelatedProduct = Prisma.SpecialRelatedProductModel

@@ -8,6 +8,10 @@ export async function PATCH(
   const { id } = await params;
   const body = await req.json();
   const updateData: Record<string, unknown> = {};
+  const stock =
+    body.stock !== undefined && body.stock !== null
+      ? Number(body.stock)
+      : undefined;
   if (body.name !== undefined) updateData.name = body.name;
   if (body.category !== undefined) updateData.category = body.category;
   if (body.description !== undefined)
@@ -20,7 +24,22 @@ export async function PATCH(
 
   const product = await db.product.update({
     where: { id },
-    data: updateData,
+    data: {
+      ...updateData,
+      ...(stock !== undefined
+        ? {
+            inventory: {
+              upsert: {
+                create: { quantity: stock },
+                update: { quantity: stock },
+              },
+            },
+          }
+        : {}),
+    },
+    include: {
+      inventory: { select: { quantity: true } },
+    },
   });
   return NextResponse.json(product);
 }
@@ -35,4 +54,3 @@ export async function DELETE(
   });
   return NextResponse.json({ success: true });
 }
-

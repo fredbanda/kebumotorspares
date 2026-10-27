@@ -38,7 +38,7 @@ export function ProductProvider({ children }: { children: ReactNode }) {
         price: raw.price,
         costPrice: raw.costPrice ?? undefined,
         rating: 5,
-        stock: raw.active ? 1 : 0,
+        stock: raw.inventory?.quantity ?? 0,
         sku: raw.sku,
         badge: undefined,
         description: raw.description ?? '',

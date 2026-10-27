@@ -3,6 +3,9 @@ import { db } from "@/prisma/db";
 
 export async function GET() {
   const products = await db.product.findMany({
+    include: {
+      inventory: { select: { quantity: true } },
+    },
     orderBy: { createdAt: "desc" },
   });
   return NextResponse.json(products);
@@ -29,8 +32,15 @@ export async function POST(req: NextRequest) {
       price: Number(body.price),
       costPrice: body.costPrice ? Number(body.costPrice) : null,
       active: true,
+      inventory: {
+        create: {
+          quantity: Number(body.stock ?? 0),
+        },
+      },
+    },
+    include: {
+      inventory: { select: { quantity: true } },
     },
   });
   return NextResponse.json(product, { status: 201 });
 }
-

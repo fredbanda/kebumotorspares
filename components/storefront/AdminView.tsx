@@ -110,12 +110,13 @@ export function AdminView({ initialProducts, initialOrders, initialReturns, init
           imageUrl: productForm.image,
           price: Number(productForm.price),
           costPrice: productForm.costPrice ? Number(productForm.costPrice) : undefined,
+          stock: Number(productForm.stock),
           active: true,
         }),
       })
       if (res.ok) {
         const updated = await res.json()
-        setProducts((prev) => prev.map((p) => p.id === editingId ? { ...p, ...updated, sku: updated.sku, image: updated.imageUrl ?? '', description: updated.description ?? '', active: updated.active } : p))
+        setProducts((prev) => prev.map((p) => p.id === editingId ? { ...p, ...updated, sku: updated.sku, image: updated.imageUrl ?? '', description: updated.description ?? '', stock: updated.inventory?.quantity ?? p.stock, active: updated.active } : p))
         setProductForm(emptyProduct)
         setEditingId(null)
       }

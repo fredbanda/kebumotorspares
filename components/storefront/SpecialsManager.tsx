@@ -8,9 +8,29 @@ interface SpecialsManagerProps {
   initialProducts: Product[]
 }
 
+type RelatedProductLink = {
+  id: string
+  product?: {
+    id: string
+    name: string
+    price: number
+    imageUrl?: string | null
+  }
+}
+
+type SpecialWithRelations = Special & {
+  product?: {
+    id: string
+    name: string
+    price: number
+    imageUrl?: string | null
+  }
+  relatedProducts?: RelatedProductLink[]
+}
+
 export function SpecialsManager({ initialProducts }: SpecialsManagerProps) {
-  const [specials, setSpecials] = useState<Special[]>([])
-  const [products, setProducts] = useState<Product[]>(initialProducts)
+  const [specials, setSpecials] = useState<SpecialWithRelations[]>([])
+  const [products] = useState<Product[]>(initialProducts)
   const [saving, setSaving] = useState(false)
   const [editingId, setEditingId] = useState<string | null>(null)
   const [showForm, setShowForm] = useState(false)
@@ -30,7 +50,7 @@ export function SpecialsManager({ initialProducts }: SpecialsManagerProps) {
   async function fetchSpecials() {
     const res = await fetch('/api/admin/specials')
     if (res.ok) {
-      const data = await res.json()
+      const data: SpecialWithRelations[] = await res.json()
       setSpecials(data)
     }
   }
@@ -83,7 +103,7 @@ export function SpecialsManager({ initialProducts }: SpecialsManagerProps) {
           body: JSON.stringify({ id: editingId, ...form }),
         })
         if (res.ok) {
-          const updated = await res.json()
+          const updated: SpecialWithRelations = await res.json()
           setSpecials((prev) => prev.map((s) => s.id === editingId ? updated : s))
           resetForm()
         }
@@ -94,7 +114,7 @@ export function SpecialsManager({ initialProducts }: SpecialsManagerProps) {
           body: JSON.stringify(form),
         })
         if (res.ok) {
-          const newSpecial = await res.json()
+          const newSpecial: SpecialWithRelations = await res.json()
           setSpecials((prev) => [newSpecial, ...prev])
           resetForm()
         }
@@ -119,7 +139,7 @@ export function SpecialsManager({ initialProducts }: SpecialsManagerProps) {
     setSelectedRelated([])
   }
 
-  function startEdit(special: Special) {
+  function startEdit(special: SpecialWithRelations) {
     setForm(special)
     setEditingId(special.id)
     setShowForm(true)
@@ -314,7 +334,7 @@ export function SpecialsManager({ initialProducts }: SpecialsManagerProps) {
                             className="icon-button delete"
                             onClick={() => {
                               const relProd = special.relatedProducts?.find(
-                                (r) => r.product?.id === relatedId
+                                (r: RelatedProductLink) => r.product?.id === relatedId
                               )
                               if (relProd) removeRelatedProduct(relProd.id)
                             }}

@@ -64,7 +64,9 @@ export const ModelName = {
   Promotion: 'Promotion',
   PromotionItem: 'PromotionItem',
   Review: 'Review',
-  Wishlist: 'Wishlist'
+  Wishlist: 'Wishlist',
+  Special: 'Special',
+  SpecialRelatedProduct: 'SpecialRelatedProduct'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -279,6 +281,33 @@ export const WishlistScalarFieldEnum = {
 } as const
 
 export type WishlistScalarFieldEnum = (typeof WishlistScalarFieldEnum)[keyof typeof WishlistScalarFieldEnum]
+
+
+export const SpecialScalarFieldEnum = {
+  id: 'id',
+  productId: 'productId',
+  originalPrice: 'originalPrice',
+  salePrice: 'salePrice',
+  discountPercentage: 'discountPercentage',
+  active: 'active',
+  startsAt: 'startsAt',
+  endsAt: 'endsAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type SpecialScalarFieldEnum = (typeof SpecialScalarFieldEnum)[keyof typeof SpecialScalarFieldEnum]
+
+
+export const SpecialRelatedProductScalarFieldEnum = {
+  id: 'id',
+  specialId: 'specialId',
+  productId: 'productId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type SpecialRelatedProductScalarFieldEnum = (typeof SpecialRelatedProductScalarFieldEnum)[keyof typeof SpecialRelatedProductScalarFieldEnum]
 
 
 export const SortOrder = {

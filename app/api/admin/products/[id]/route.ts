@@ -1,10 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/prisma/db";
+import { hasTable } from "@/lib/db-capabilities";
 
 export async function PATCH(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const inventoryTableExists = await hasTable("inventory");
   const { id } = await params;
   const body = await req.json();
   const updateData: Record<string, unknown> = {};
@@ -24,22 +26,26 @@ export async function PATCH(
 
   const product = await db.product.update({
     where: { id },
-    data: {
-      ...updateData,
-      ...(stock !== undefined
-        ? {
-            inventory: {
-              upsert: {
-                create: { quantity: stock },
-                update: { quantity: stock },
-              },
-            },
-          }
-        : {}),
-    },
-    include: {
-      inventory: { select: { quantity: true } },
-    },
+    data: inventoryTableExists
+      ? {
+          ...updateData,
+          ...(stock !== undefined
+            ? {
+                inventory: {
+                  upsert: {
+                    create: { quantity: stock },
+                    update: { quantity: stock },
+                  },
+                },
+              }
+            : {}),
+        }
+      : updateData,
+    include: inventoryTableExists
+      ? {
+          inventory: { select: { quantity: true } },
+        }
+      : undefined,
   });
   return NextResponse.json(product);
 }

@@ -2,14 +2,14 @@
 
 import { useEffect, useMemo, useState } from 'react'
 import { createAuthClient } from 'better-auth/client'
-import { CartLine, Product } from '@/lib/catalog'
+import { CartLine, Product, Special } from '@/lib/catalog'
 import { useProducts } from '@/components/products/ProductProvider'
 
 const authClient = createAuthClient()
 
 export type View = 'shop' | 'product' | 'cart' | 'checkout'
 
-export function useStorefront({ initialProducts, initialCategory }: { initialProducts?: Product[]; initialCategory?: string }) {
+export function useStorefront({ initialProducts, initialSpecials, initialCategory }: { initialProducts?: Product[]; initialSpecials?: Special[]; initialCategory?: string }) {
   const { products: contextProducts, setProducts, addProduct: addProductToContext } = useProducts()
   const [category, setCategory] = useState(initialCategory ? initialCategory.charAt(0).toUpperCase() + initialCategory.slice(1) : 'All parts')
   const [query, setQuery] = useState('')
@@ -22,6 +22,7 @@ export function useStorefront({ initialProducts, initialCategory }: { initialPro
   const [session, setSession] = useState<{ user: { id: string; name?: string | null; email: string } } | null>(null)
   const [authOpen, setAuthOpen] = useState(false)
   const [page, setPage] = useState(1)
+  const [specials] = useState<Special[]>(initialSpecials ?? [])
 
   useEffect(() => {
     if (initialProducts && contextProducts.length === 0) {
@@ -109,6 +110,7 @@ export function useStorefront({ initialProducts, initialCategory }: { initialPro
   return {
     products,
     setProducts,
+    specials,
     category, setCategory,
     query, setQuery,
     cart, setCart,

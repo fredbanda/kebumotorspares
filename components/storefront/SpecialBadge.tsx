@@ -20,7 +20,6 @@ export function SpecialBadge({
           <span className="strikethrough">{money(originalPrice)}</span>
         </div>
         <div className="special-badge-new">
-          <span className="discount-label">No</span>
           <span className="new-price">{money(salePrice)}</span>
         </div>
         <div className="discount-percent">-{Math.round(discountPercentage)}%</div>

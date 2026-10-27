@@ -1,4 +1,4 @@
-import { Product } from '@/lib/catalog'
+import { Product, Special } from '@/lib/catalog'
 import { CatalogSection } from './CatalogSection'
 import { FeatureBanner } from './FeatureBanner'
 import { Hero } from './Hero'
@@ -7,6 +7,7 @@ import { TrustRow } from './TrustRow'
 interface ShopViewProps {
   filtered: Product[]
   allFiltered: Product[]
+  specials: Special[]
   category: string
   query: string
   wishlist: string[]

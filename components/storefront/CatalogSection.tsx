@@ -1,11 +1,12 @@
 import { ArrowRight, Search, SlidersHorizontal } from 'lucide-react'
-import { categories, Product } from '@/lib/catalog'
+import { categories, Product, Special } from '@/lib/catalog'
 import { ProductCard } from './ProductCard'
 import { Pagination } from './Pagination'
 
 interface CatalogSectionProps {
   filtered: Product[]
   allFiltered: Product[]
+  specials: Special[]
   category: string
   query: string
   wishlist: string[]
@@ -23,6 +24,7 @@ interface CatalogSectionProps {
 export function CatalogSection({
   filtered,
   allFiltered,
+  specials,
   category,
   query,
   wishlist,
@@ -78,6 +80,7 @@ export function CatalogSection({
           <ProductCard
             key={product.id}
             product={product}
+            special={specials.find((s) => s.productId === product.id)}
             wished={wishlist.includes(product.id)}
             onWish={() => onWish(product.id)}
             onView={() => onView(product)}

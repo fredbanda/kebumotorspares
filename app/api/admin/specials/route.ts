@@ -1,7 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/prisma/db";
+import { hasTable, hasTables } from "@/lib/db-capabilities";
 
 export async function GET() {
+  const specialsTableExists = await hasTable("specials");
+  if (!specialsTableExists) {
+    return NextResponse.json([]);
+  }
+
   const specials = await db.special.findMany({
     include: {
       product: {
@@ -22,6 +28,14 @@ export async function GET() {
 
 export async function POST(req: NextRequest) {
   try {
+    const specialsTableExists = await hasTable("specials");
+    if (!specialsTableExists) {
+      return NextResponse.json(
+        { error: "Specials table not available. Run migrations first." },
+        { status: 503 }
+      );
+    }
+
     const body = await req.json();
     const special = await db.special.create({
       data: {
@@ -50,6 +64,14 @@ export async function POST(req: NextRequest) {
 
 export async function PATCH(req: NextRequest) {
   try {
+    const specialsTableExists = await hasTable("specials");
+    if (!specialsTableExists) {
+      return NextResponse.json(
+        { error: "Specials table not available. Run migrations first." },
+        { status: 503 }
+      );
+    }
+
     const body = await req.json();
     const { id, ...updateData } = body;
     
@@ -88,6 +110,15 @@ export async function PATCH(req: NextRequest) {
 
 export async function DELETE(req: NextRequest) {
   try {
+    const { specials: specialsTableExists, special_related_products: relatedTableExists } =
+      await hasTables(["specials", "special_related_products"]);
+    if (!specialsTableExists || !relatedTableExists) {
+      return NextResponse.json(
+        { error: "Specials tables not available. Run migrations first." },
+        { status: 503 }
+      );
+    }
+
     const { searchParams } = new URL(req.url);
     const id = searchParams.get("id");
 

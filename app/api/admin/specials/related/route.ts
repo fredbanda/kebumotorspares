@@ -1,8 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/prisma/db";
+import { hasTable } from "@/lib/db-capabilities";
 
 export async function POST(req: NextRequest) {
   try {
+    const relatedTableExists = await hasTable("special_related_products");
+    if (!relatedTableExists) {
+      return NextResponse.json(
+        { error: "Related specials table not available. Run migrations first." },
+        { status: 503 }
+      );
+    }
+
     const body = await req.json();
     const { specialId, productId } = body;
 
@@ -29,6 +38,14 @@ export async function POST(req: NextRequest) {
 
 export async function DELETE(req: NextRequest) {
   try {
+    const relatedTableExists = await hasTable("special_related_products");
+    if (!relatedTableExists) {
+      return NextResponse.json(
+        { error: "Related specials table not available. Run migrations first." },
+        { status: 503 }
+      );
+    }
+
     const { searchParams } = new URL(req.url);
     const id = searchParams.get("id");
 

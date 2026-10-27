@@ -1,5 +1,6 @@
 import { db } from "@/prisma/db";
 import { AdminView } from "@/components/storefront/AdminView";
+import { hasTable } from "@/lib/db-capabilities";
 import type {
   Order,
   Return,
@@ -14,24 +15,35 @@ import { Pool } from "pg";
 const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 
 export default async function StoreAdmin() {
+  const inventoryTableExists = await hasTable("inventory");
+
+  const productBaseSelect = {
+    id: true,
+    name: true,
+    category: true,
+    slug: true,
+    sku: true,
+    description: true,
+    imageUrl: true,
+    price: true,
+    costPrice: true,
+    active: true,
+    createdAt: true,
+  } as const;
+
   const [products, orders, returns, users, authUsers] = await Promise.all([
-    db.product.findMany({
-      select: {
-        id: true,
-        name: true,
-        category: true,
-        slug: true,
-        sku: true,
-        description: true,
-        imageUrl: true,
-        price: true,
-        costPrice: true,
-        active: true,
-        createdAt: true,
-        inventory: { select: { quantity: true } },
-      },
-      orderBy: { createdAt: "desc" },
-    }),
+    inventoryTableExists
+      ? db.product.findMany({
+          select: {
+            ...productBaseSelect,
+            inventory: { select: { quantity: true } },
+          },
+          orderBy: { createdAt: "desc" },
+        })
+      : db.product.findMany({
+          select: productBaseSelect,
+          orderBy: { createdAt: "desc" },
+        }),
     db.order.findMany({
       orderBy: { createdAt: "desc" },
       include: { user: { select: { name: true, email: true } }, orderItems: { select: { id: true } } },
@@ -55,7 +67,8 @@ export default async function StoreAdmin() {
     category: p.category,
     sku: p.sku ?? p.slug,
     price: p.price,
-    stock: p.inventory?.quantity ?? 0,
+    stock:
+      "inventory" in p && p.inventory ? p.inventory.quantity : 0,
     rating: 5,
     description: p.description ?? "",
     image: p.imageUrl ?? "",

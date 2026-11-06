@@ -35,7 +35,7 @@ export function Header({
         </button>
         <Link href="/">
           <button className="wordmark" onClick={onLogoClick}>
-            <Image
+            {/* <Image
               src="/logo.jpg"
               alt="KEBU MOTOR SPARES"
               priority
@@ -43,7 +43,8 @@ export function Header({
               height={10}
               // className=" md:h-10 md:w-20 sm:h-4 sm:w-6"
               className="h-16 w-40 "
-            />
+            /> */}
+            Kebu Motor Spares
           </button>
         </Link>
 

@@ -61,7 +61,7 @@ export function CartView({ cart, total, onBack, onChange, onCheckout }: CartView
             <button className="red-button full" onClick={onCheckout}>
               Secure checkout <ArrowRight />
             </button>
-            <small>Secured by Yoco · ZAR payments only</small>
+            <small>Secured by PayFast · ZAR payments only</small>
           </aside>
         </div>
       ) : (

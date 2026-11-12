@@ -46,9 +46,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="bg-background">
-      <head>
-        <script src="https://js.yoco.com/sdk/v1/yoco-sdk-web.js" async />
-      </head>
+      <head />
       <body className={`${dmSans.variable} ${dmSerif.variable} antialiased`} suppressHydrationWarning>
         <ProductProvider>
           {children}

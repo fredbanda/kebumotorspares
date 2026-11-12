@@ -118,7 +118,7 @@ export function useStorefront({ initialProducts, initialSpecials, initialCategor
     view, setView,
     selected,
     mobileOpen, setMobileOpen,
-    notice,
+    notice, setNotice,
     filtered: paginatedProducts,
     allFiltered: filtered,
     totalPages,

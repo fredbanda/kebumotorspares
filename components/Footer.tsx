@@ -47,12 +47,10 @@ const Footer = () => {
 
   // Payment methods
   const paymentMethods = [
+    { name: "PayFast", icon: "💳" },
     { name: "Visa", icon: "💳" },
     { name: "Mastercard", icon: "💳" },
-    { name: "Amex", icon: "💳" },
-    { name: "PayPal", icon: "💳" },
-    { name: "Apple Pay", icon: "💳" },
-    { name: "Google Pay", icon: "💳" },
+    { name: "Instant EFT", icon: "🏦" },
   ];
 
   // Trust badges

@@ -4,22 +4,6 @@ import { useState } from 'react'
 import { ArrowRight } from 'lucide-react'
 import { CartLine, money } from '@/lib/catalog'
 
-declare global {
-  interface Window {
-    YocoSDK: {
-      new(config: { publicKey: string }): {
-        showPopup(options: {
-          amountInCents: number
-          currency: string
-          name: string
-          description: string
-          callback: (result: { id?: string; error?: { message: string } }) => void
-        }): void
-      }
-    }
-  }
-}
-
 interface CheckoutViewProps {
   cart: CartLine[]
   total: number
@@ -28,7 +12,7 @@ interface CheckoutViewProps {
   onSuccess: () => void
 }
 
-export function CheckoutView({ cart, total, userId, onBack, onSuccess }: CheckoutViewProps) {
+export function CheckoutView({ cart, total, userId, onBack }: CheckoutViewProps) {
   const [form, setForm] = useState({ name: '', email: '', address: '', city: '', zip: '' })
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
@@ -37,51 +21,55 @@ export function CheckoutView({ cart, total, userId, onBack, onSuccess }: Checkou
     return (e: React.ChangeEvent<HTMLInputElement>) => setForm((f) => ({ ...f, [field]: e.target.value }))
   }
 
+  function submitToPayFast(processUrl: string, fields: Record<string, string>) {
+    const formEl = document.createElement('form')
+    formEl.method = 'POST'
+    formEl.action = processUrl
+    Object.entries(fields).forEach(([name, value]) => {
+      const input = document.createElement('input')
+      input.type = 'hidden'
+      input.name = name
+      input.value = value
+      formEl.appendChild(input)
+    })
+    document.body.appendChild(formEl)
+    formEl.submit()
+  }
+
   async function handleCheckout(e: React.FormEvent) {
     e.preventDefault()
     setError('')
+    setLoading(true)
 
-    if (typeof window.YocoSDK === 'undefined') {
-      setError('Payment SDK not loaded. Please refresh and try again.')
-      return
+    try {
+      const res = await fetch('/api/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userId,
+          cart: cart.map((l) => ({ productId: l.product.id, quantity: l.quantity, price: l.product.price })),
+          total,
+          shipping: form,
+        }),
+      })
+
+      const data = await res.json().catch(() => ({}))
+      if (!res.ok) {
+        setError(data.error ?? 'Unable to start payment. Please try again.')
+        return
+      }
+
+      if (!data.processUrl || !data.fields) {
+        setError('Payment gateway response was invalid.')
+        return
+      }
+
+      submitToPayFast(data.processUrl, data.fields)
+    } catch {
+      setError('Unable to start payment. Please try again.')
+    } finally {
+      setLoading(false)
     }
-
-    const yoco = new window.YocoSDK({ publicKey: process.env.NEXT_PUBLIC_YOCO_PUBLIC_KEY! })
-
-    yoco.showPopup({
-      amountInCents: Math.round(total * 100),
-      currency: 'ZAR',
-      name: 'Kebu Motor Spares',
-      description: `${cart.length} item(s)`,
-      callback: async (result) => {
-        if (result.error) {
-          setError(result.error.message)
-          return
-        }
-        if (!result.id) return
-
-        setLoading(true)
-        const res = await fetch('/api/checkout', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            token: result.id,
-            userId,
-            cart: cart.map((l) => ({ productId: l.product.id, quantity: l.quantity, price: l.product.price })),
-            total,
-            shipping: form,
-          }),
-        })
-
-        if (res.ok) {
-          onSuccess()
-        } else {
-          const data = await res.json().catch(() => ({}))
-          setError(data.error ?? 'Payment failed. Please try again.')
-        }
-        setLoading(false)
-      },
-    })
   }
 
   return (
@@ -107,10 +95,10 @@ export function CheckoutView({ cart, total, userId, onBack, onSuccess }: Checkou
           </div>
           {error && <p className="auth-error">{error}</p>}
           <button className="red-button full" type="submit" disabled={loading}>
-            {loading ? 'Processing…' : `Pay ${money(total)}`} {!loading && <ArrowRight size={16} />}
+            {loading ? 'Redirecting to PayFast…' : `Pay ${money(total)}`} {!loading && <ArrowRight size={16} />}
           </button>
           <small style={{ color: 'var(--muted-foreground)', fontSize: 11 }}>
-            Secured by Yoco · ZAR payments only
+            Secured by PayFast · ZAR payments only
           </small>
         </form>
 

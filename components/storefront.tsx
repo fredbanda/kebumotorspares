@@ -1,6 +1,7 @@
 'use client'
 
-import { useRouter } from 'next/navigation'
+import { useEffect } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { AuthModal } from './storefront/AuthModal'
 import { CartView } from './storefront/CartView'
 import { CheckoutView } from './storefront/CheckoutView'
@@ -12,9 +13,28 @@ import { useStorefront } from './storefront/hooks/useStorefront'
 
 export function Storefront({ initialProducts, initialSpecials, initialCategory }: { initialProducts?: import('@/lib/catalog').Product[]; initialSpecials?: import('@/lib/catalog').Special[]; initialCategory?: string }) {
   const storefront = useStorefront({ initialProducts, initialSpecials, initialCategory })
-  const { selected } = storefront
+  const { selected, setCart, setView, setNotice } = storefront
 
   const router = useRouter()
+  const searchParams = useSearchParams()
+
+  useEffect(() => {
+    const payment = searchParams.get('payment')
+    if (!payment) return
+
+    if (payment === 'success') {
+      setCart([])
+      setView('shop')
+      setNotice('Payment submitted. Your order will be confirmed shortly.')
+    } else if (payment === 'cancelled') {
+      setView('cart')
+      setNotice('Payment cancelled. You can try again.')
+    }
+
+    const t = setTimeout(() => setNotice(''), 4000)
+    router.replace('/', { scroll: false })
+    return () => clearTimeout(t)
+  }, [searchParams, router, setCart, setView, setNotice])
 
   function handleAccountClick() {
     if (storefront.session) {
@@ -30,11 +50,6 @@ export function Storefront({ initialProducts, initialSpecials, initialCategory }
     } else {
       storefront.setView('checkout')
     }
-  }
-
-  function handlePaymentSuccess() {
-    storefront.setCart([])
-    storefront.setView('shop')
   }
 
   return (
@@ -98,7 +113,10 @@ export function Storefront({ initialProducts, initialSpecials, initialCategory }
           total={storefront.cartTotal}
           userId={storefront.session.user.id}
           onBack={() => storefront.setView('cart')}
-          onSuccess={handlePaymentSuccess}
+          onSuccess={() => {
+            storefront.setCart([])
+            storefront.setView('shop')
+          }}
         />
       )}
 

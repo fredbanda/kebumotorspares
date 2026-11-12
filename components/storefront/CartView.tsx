@@ -12,7 +12,7 @@ interface CartViewProps {
 export function CartView({ cart, total, onBack, onChange, onCheckout }: CartViewProps) {
   return (
     <main className="cart-page">
-      <button className="back-button" onClick={onBack}>
+      <button className="back-button hover:bg-emerald-600 hover:text-white" onClick={onBack}>
         ← Continue shopping
       </button>
       <div className="section-heading">

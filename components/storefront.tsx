@@ -91,8 +91,11 @@ export function Storefront({ initialProducts, initialSpecials, initialCategory }
           product={selected}
           special={storefront.specials.find((s) => s.productId === selected.id)}
           wished={storefront.wishlist.includes(selected.id)}
+          inCart={storefront.cart.some((line) => line.product.id === selected.id)}
           onWish={() => storefront.toggleWish(selected.id)}
           onAdd={() => storefront.addToCart(selected)}
+          onGoToCart={() => storefront.setView('cart')}
+          onContinueShopping={() => storefront.setView('shop')}
           onBack={() => storefront.setView('shop')}
         />
       ) : null}

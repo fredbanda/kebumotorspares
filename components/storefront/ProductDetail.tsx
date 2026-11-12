@@ -8,8 +8,11 @@ interface ProductDetailProps {
   special?: Special
   relatedProducts?: Product[]
   wished: boolean
+  inCart?: boolean
   onWish: () => void
   onAdd: () => void
+  onGoToCart?: () => void
+  onContinueShopping?: () => void
   onViewProduct?: (product: Product) => void
   onBack: () => void
 }
@@ -19,8 +22,11 @@ export function ProductDetail({
   special, 
   relatedProducts = [],
   wished, 
+  inCart = false,
   onWish, 
   onAdd, 
+  onGoToCart,
+  onContinueShopping,
   onViewProduct,
   onBack 
 }: ProductDetailProps) {
@@ -49,24 +55,44 @@ export function ProductDetail({
           </p>
           <h1>{product.name}</h1>
           <div className="detail-rating">
-            <Star fill="currentColor" /> {product.rating} <span>18 verified reviews</span>
+            <Star fill="currentColor" /> {product.rating}{" "}
+            <span>18 verified reviews</span>
           </div>
           <p className="detail-description">{product.description}</p>
           <div className="detail-price">{money(displayPrice)}</div>
           {special && special.active && (
             <div className="detail-savings">
-              You save {money(special.originalPrice - special.salePrice)} ({Math.round(special.discountPercentage)}%)
+              You save {money(special.originalPrice - special.salePrice)} (
+              {Math.round(special.discountPercentage)}%)
             </div>
           )}
           <p className="stock">
             <span /> In stock — ships today
           </p>
           <div className="detail-actions">
-            <button className="red-button" onClick={onAdd}>
-              Add to cart <ShoppingBag data-icon="inline-end" />
-            </button>
-            <button className={wished ? 'wish-large active' : 'wish-large'} onClick={onWish}>
-              <Heart fill={wished ? 'currentColor' : 'none'} /> {wished ? 'Saved' : 'Save to wishlist'}
+            {inCart ? (
+              <button className="red-button" onClick={onGoToCart}>
+                Checkout <ShoppingBag data-icon="inline-end" />
+              </button>
+            ) : (
+              <button className="red-button" onClick={onAdd}>
+                Add to cart <ShoppingBag data-icon="inline-end" />
+              </button>
+            )}
+            {inCart && onContinueShopping && (
+              <button
+                className="wish-large hover:animate-bounce"
+                onClick={onContinueShopping}
+              >
+                Continue shopping <ArrowRight data-icon="inline-end" />
+              </button>
+            )}
+            <button
+              className={wished ? "wish-large active" : "wish-large"}
+              onClick={onWish}
+            >
+              <Heart fill={wished ? "currentColor" : "none"} />{" "}
+              {wished ? "Saved" : "Save to wishlist"}
             </button>
           </div>
           <div className="fitment">
@@ -84,8 +110,8 @@ export function ProductDetail({
           <h2>Related products</h2>
           <div className="related-products-grid">
             {relatedProducts.map((relProduct) => (
-              <div 
-                key={relProduct.id} 
+              <div
+                key={relProduct.id}
                 className="related-product-item"
                 onClick={() => onViewProduct?.(relProduct)}
               >
@@ -93,7 +119,13 @@ export function ProductDetail({
                   {relProduct.image ? (
                     <img src={relProduct.image} alt={relProduct.name} />
                   ) : (
-                    <div style={{ width: '100%', height: '100%', background: 'var(--muted)' }} />
+                    <div
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        background: "var(--muted)",
+                      }}
+                    />
                   )}
                 </div>
                 <div className="related-product-info">
@@ -107,5 +139,5 @@ export function ProductDetail({
         </section>
       )}
     </main>
-  )
+  );
 }

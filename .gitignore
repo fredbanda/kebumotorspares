@@ -20,3 +20,4 @@ dist/
 /lib/generated/prisma
 .vercel
 .env*
+.andromity/

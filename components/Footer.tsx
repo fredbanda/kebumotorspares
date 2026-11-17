@@ -1,6 +1,5 @@
 "use client";
 
-import React from "react";
 import Link from "next/link";
 import {
   MapPin,
@@ -19,22 +18,24 @@ const Footer = () => {
   // Categories data
   const categories = [
     { name: "Engine", href: "/categories/engine" },
-    { name: "Axle Drive", href: "/categories/axle-drive"},
+    { name: "Axle Drive", href: "/categories/axle-drive" },
     { name: "Brakes System", href: "/categories/brakes-system" },
-    { name: "Clutch System", href: "/categories/clutch-system"},
-    { name: "Control Cables", href: "/categories/control-cables"},
+    { name: "Clutch System", href: "/categories/clutch-system" },
+    { name: "Control Cables", href: "/categories/control-cables" },
     { name: "Suspension", href: "/categories/suspension" },
     { name: "Exhaust", href: "/categories/exhaust" },
     { name: "Electrical", href: "/categories/electrical" },
     { name: "Body", href: "/categories/body" },
     { name: "Fuel Supply System", href: "/categories/fuel-supply-system" },
-    {name: "Spark / Glow Ignition", href: "/categories/spark-glow-ignition" },
+    { name: "Spark / Glow Ignition", href: "/categories/spark-glow-ignition" },
     { name: "Cooling System", href: "/categories/cooling-system" },
     { name: "Accessories", href: "/categories/accessories" },
     { name: "Specialized", href: "/categories/specialized" },
-    { name: "Tools and Accessories", href: "/categories/tools-and-accessories" },
+    {
+      name: "Tools and Accessories",
+      href: "/categories/tools-and-accessories",
+    },
     { name: "Steering / Suspension", href: "/categories/steering-suspension" },
-
   ];
 
   // Social links
@@ -55,7 +56,7 @@ const Footer = () => {
 
   // Trust badges
   const trustBadges = [
-    { icon: Truck, text: "Free Shipping Over $99" },
+    { icon: Truck, text: "Free Delivery Over R2,000" },
     { icon: Shield, text: "Secure Payment" },
     { icon: RotateCcw, text: "30-Day Returns" },
     { icon: CreditCard, text: "0% Financing" },
@@ -170,18 +171,22 @@ const Footer = () => {
               </h3>
               <ul className="space-y-2">
                 {[
-                  "Contact Us",
-                  "Shipping Info",
-                  "Returns & Exchanges",
-                  "FAQs",
-                  "Track Order",
+                  { label: "Returns & Exchanges", href: "/return-policy" },
+                  { label: "Refund Policy", href: "/refund-policy" },
+                  { label: "Shipping Policy", href: "/shipping-policy" },
+                  {
+                    label: "Cancellation Policy",
+                    href: "/cancellation-policy",
+                  },
+                  { label: "Privacy Policy", href: "/privacy-policy" },
+                  { label: "Contact Us", href: "/#contact" },
                 ].map((item) => (
-                  <li key={item}>
+                  <li key={item.label}>
                     <Link
-                      href="#"
+                      href={item.href}
                       className="text-sm text-gray-400 hover:text-red-500 transition-colors duration-200"
                     >
-                      {item}
+                      {item.label}
                     </Link>
                   </li>
                 ))}
@@ -294,6 +299,18 @@ const Footer = () => {
                 className="text-sm text-gray-500 hover:text-red-500 transition-colors duration-200"
               >
                 Shipping Policy
+              </Link>
+              <Link
+                href="/refund-policy"
+                className="text-sm text-gray-500 hover:text-red-500 transition-colors duration-200"
+              >
+                Refund Policy
+              </Link>
+              <Link
+                href="/cancellation-policy"
+                className="text-sm text-gray-500 hover:text-red-500 transition-colors duration-200"
+              >
+                Cancellation Policy
               </Link>
             </div>
             <p className="text-sm text-gray-500 text-center md:text-right">
